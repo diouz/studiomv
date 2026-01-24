@@ -9,7 +9,8 @@ import {
   Star,
   User,
   Building,
-  Quote
+  Quote,
+  X
 } from 'lucide-react';
 import { Testimonial } from '../../types';
 import { useTestimonials } from '../../hooks/useFirebase';
@@ -20,8 +21,90 @@ const TestimonialsManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+  const [formData, setFormData] = useState({
+    clientName: '',
+    clientRole: '',
+    clientCompany: '',
+    clientAvatar: '',
+    content: '',
+    rating: 5,
+    featured: false,
+    published: false,
+    order: 0
+  });
 
+  const resetForm = () => {
+    setFormData({
+      clientName: '',
+      clientRole: '',
+      clientCompany: '',
+      clientAvatar: '',
+      content: '',
+      rating: 5,
+      featured: false,
+      published: false,
+      order: 0
+    });
+    setEditingTestimonial(null);
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const testimonialData = {
+        ...formData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (editingTestimonial) {
+        await updateTestimonial(editingTestimonial.id, testimonialData);
+      } else {
+        await createTestimonial(testimonialData);
+      }
+
+      setShowForm(false);
+      resetForm();
+    } catch (error) {
+      console.error('Erro ao salvar testemunho:', error);
+    }
+  };
+
+  const handleEdit = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setFormData({
+      clientName: testimonial.clientName,
+      clientRole: testimonial.clientRole,
+      clientCompany: testimonial.clientCompany || '',
+      clientAvatar: testimonial.clientAvatar || '',
+      content: testimonial.content,
+      rating: testimonial.rating,
+      featured: testimonial.featured,
+      published: testimonial.published,
+      order: testimonial.order
+    });
+    setShowForm(true);
+  };
+
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${
+          i < rating ? 'text-yellow-400 fill-current' : 'text-stone-300'
+        }`}
+      />
+    ));
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-PT', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
   // Filtrar testemunhos
   useEffect(() => {
@@ -220,7 +303,7 @@ const TestimonialsManager: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => setEditingTestimonial(testimonial)}
+                  onClick={() => handleEdit(testimonial)}
                   className="p-2 text-blue-600 hover:bg-blue-50 rounded"
                   title="Editar"
                 >
@@ -259,6 +342,161 @@ const TestimonialsManager: React.FC = () => {
               Adicionar Primeiro Testemunho
             </button>
           )}
+        </div>
+      )}
+
+      {/* Modal de Formulário */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-stone-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-stone-900">
+                  {editingTestimonial ? 'Editar Testemunho' : 'Novo Testemunho'}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                  className="text-stone-400 hover:text-stone-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {/* Nome do Cliente */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Nome do Cliente *
+                </label>
+                <input
+                  type="text"
+                  value={formData.clientName}
+                  onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                  required
+                />
+              </div>
+
+              {/* Cargo */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Cargo *
+                </label>
+                <input
+                  type="text"
+                  value={formData.clientRole}
+                  onChange={(e) => setFormData({ ...formData, clientRole: e.target.value })}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                  required
+                />
+              </div>
+
+              {/* Empresa */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Empresa
+                </label>
+                <input
+                  type="text"
+                  value={formData.clientCompany}
+                  onChange={(e) => setFormData({ ...formData, clientCompany: e.target.value })}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                />
+              </div>
+
+              {/* Avatar */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  URL do Avatar
+                </label>
+                <input
+                  type="url"
+                  value={formData.clientAvatar}
+                  onChange={(e) => setFormData({ ...formData, clientAvatar: e.target.value })}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                  placeholder="https://exemplo.com/avatar.jpg"
+                />
+              </div>
+
+              {/* Conteúdo do Testemunho */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Testemunho *
+                </label>
+                <textarea
+                  value={formData.content}
+                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                  required
+                />
+              </div>
+
+              {/* Avaliação */}
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Avaliação (1-5 estrelas)
+                </label>
+                <select
+                  value={formData.rating}
+                  onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
+                >
+                  <option value={1}>1 Estrela</option>
+                  <option value={2}>2 Estrelas</option>
+                  <option value={3}>3 Estrelas</option>
+                  <option value={4}>4 Estrelas</option>
+                  <option value={5}>5 Estrelas</option>
+                </select>
+              </div>
+
+              {/* Checkboxes */}
+              <div className="flex gap-6">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    className="mr-2"
+                  />
+                  Destacar
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.published}
+                    onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                    className="mr-2"
+                  />
+                  Publicar
+                </label>
+              </div>
+
+              {/* Botões */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                  className="flex-1 px-4 py-2 border border-stone-300 text-stone-700 rounded-lg hover:bg-stone-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-stone-800 text-white rounded-lg hover:bg-stone-700"
+                >
+                  {editingTestimonial ? 'Atualizar' : 'Criar'} Testemunho
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
