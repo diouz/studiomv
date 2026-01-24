@@ -108,8 +108,8 @@ const Cursor: React.FC = () => {
       <div
         className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${
           isHovering
-            ? 'border-stone-400 bg-stone-400/20 shadow-lg shadow-stone-400/50'
-            : 'border-white bg-white/10 shadow-lg shadow-white/30'
+            ? 'border-stone-400 bg-stone-400/20 shadow-stone-400/50'
+            : 'border-white bg-white/10 '
         }`}
       >
         <div

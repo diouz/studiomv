@@ -89,9 +89,13 @@ const MediaLinkUploader: React.FC<MediaLinkUploaderProps> = ({
     if (showLinkModal === 'image') {
       mediaItem.thumbnailUrl = linkUrl;
       mediaItem.alt = linkTitle;
+      console.log('Adicionando imagem:', mediaItem);
       onImagesChange([...images, mediaItem]);
     } else {
-      onVideosChange([...videos, mediaItem]);
+      console.log('Adicionando vídeo:', mediaItem);
+      const newVideos = [...videos, mediaItem];
+      console.log('Array de vídeos após adição:', newVideos);
+      onVideosChange(newVideos);
     }
 
     setLinkUrl('');

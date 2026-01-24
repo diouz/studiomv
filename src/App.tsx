@@ -7,6 +7,7 @@ import ShowreelSection from './components/ShowreelSection';
 import ProjectCarousel from './components/ProjectCarousel';
 import ServicesSection from './components/ServicesSection';
 import AboutSection from './components/AboutSection';
+import TestimonialsSection from './components/TestimonialsSection';
 import ImageGallery from './components/ImageGallery';
 import AcademiaSection from './components/AcademiaSection';
 import Footer from './components/Footer';
@@ -75,6 +76,9 @@ function App() {
 
             {/* About Section */}
             <AboutSection />
+
+            {/* Testimonials Section */}
+            <TestimonialsSection />
 
             {/* Contact Section */}
             <LazyContact />

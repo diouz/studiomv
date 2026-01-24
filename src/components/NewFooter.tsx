@@ -84,7 +84,7 @@ const NewFooter: React.FC = () => {
 
             {/* Subtitle */}
             <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto">
-              Tem dúvidas, ideias para projetos ou só quer dizer oi? Estamos todos ouvindo!
+              Tem dúvidas, ideias para projetos ou só quer dizer oi? Estamos todos a ouvir!
             </p>
 
             {/* CTA Button Padronizado */}

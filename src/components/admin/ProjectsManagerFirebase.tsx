@@ -575,7 +575,14 @@ const ProjectsManagerFirebase: React.FC = () => {
                   images={formData.images}
                   videos={formData.videos}
                   onImagesChange={(images) => setFormData(prev => ({ ...prev, images }))}
-                  onVideosChange={(videos) => setFormData(prev => ({ ...prev, videos }))}
+                  onVideosChange={(videos) => {
+                    console.log('onVideosChange chamado com:', videos);
+                    setFormData(prev => {
+                      const newFormData = { ...prev, videos };
+                      console.log('FormData atualizado:', newFormData);
+                      return newFormData;
+                    });
+                  }}
                   maxImages={6}
                   maxVideos={2}
                 />

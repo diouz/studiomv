@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
                     ? 'opacity-100 scale-100 animate-pulse'
                     : 'opacity-0 scale-0'
                 }`} />
-                vamos falar
+                vamos falar 
               </span>
 
               {/* Background transition overlay */}

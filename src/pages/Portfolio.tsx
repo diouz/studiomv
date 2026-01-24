@@ -6,9 +6,12 @@ import StandardButton from '../components/StandardButton';
 import { usePublicProjectsByCategory, useProjectCategories } from '../hooks/usePublicData';
 import { Project } from '../types';
 import VideoRenderer from '../components/VideoRenderer';
+import VideoModal from '../components/VideoModal';
+import { Play } from 'lucide-react';
 
 const Portfolio: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedVideo, setSelectedVideo] = useState<{ url: string; title: string; description?: string } | null>(null);
 
   // Hooks para dados do Firebase
   const { projects, loading: projectsLoading, error: projectsError } = usePublicProjectsByCategory(selectedCategory);
@@ -138,18 +141,33 @@ const Portfolio: React.FC = () => {
                     <div className="relative bg-gradient-to-br from-stone-900/40 to-stone-950/60 backdrop-blur-md rounded-3xl overflow-hidden border border-stone-700/30 hover:border-stone-600/40 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-stone-600/10">
                 {/* Mídia do Projeto */}
                 <div className="aspect-video relative overflow-hidden">
-                  {/* Renderizar vídeo se disponível, senão imagem */}
+                  {/* Renderizar thumbnail com botão de play para vídeos */}
                   {project.videos && project.videos.length > 0 ? (
-                    <VideoRenderer
-                      url={project.videos[0].url}
-                      title={project.title}
-                      thumbnail={project.thumbnail}
-                      className="w-full h-full"
-                      autoPlay={false}
-                      muted={true}
-                      controls={false}
-                      showPlayButton={true}
-                    />
+                    <div className="relative w-full h-full group">
+                      <img
+                        src={project.images?.[0]?.url || project.videos[0].thumbnailUrl || project.thumbnail || 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1'}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+
+                      {/* Botão de play apenas no hover */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedVideo({
+                              url: project.videos[0].url,
+                              title: project.title,
+                              description: project.description
+                            });
+                          }}
+                          className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center hover:bg-white/30 hover:scale-110 transition-all duration-300"
+                          aria-label={`Reproduzir vídeo: ${project.title}`}
+                        >
+                          <Play className="w-6 h-6 text-white ml-1" />
+                        </button>
+                      </div>
+                    </div>
                   ) : project.thumbnail ? (
                     <img
                       src={project.thumbnail}
@@ -258,6 +276,17 @@ const Portfolio: React.FC = () => {
           50% { transform: translate(-1px, 1px) }
         }
       `}</style>
+
+      {/* Modal de Vídeo */}
+      {selectedVideo && (
+        <VideoModal
+          isOpen={!!selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          videoUrl={selectedVideo.url}
+          title={selectedVideo.title}
+          description={selectedVideo.description}
+        />
+      )}
     </div>
   );
 };
