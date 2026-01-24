@@ -13,6 +13,7 @@ import {
   User,
   Clock
 } from 'lucide-react';
+import { useContacts } from '../../hooks/useFirebase';
 
 interface ContactForm {
   id: string;
@@ -29,12 +30,18 @@ interface ContactForm {
 }
 
 const ContactManager: React.FC = () => {
-  const [contacts, setContacts] = useState<ContactForm[]>([]);
+  const {
+    contacts,
+    loading,
+    error,
+    updateContact,
+    deleteContact
+  } = useContacts();
+
   const [filteredContacts, setFilteredContacts] = useState<ContactForm[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedContact, setSelectedContact] = useState<ContactForm | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const statusOptions = [
     { value: 'all', label: 'Todos os Estados' },
@@ -54,53 +61,10 @@ const ContactManager: React.FC = () => {
     'Outro'
   ];
 
-  // Simular carregamento de dados
+  // Carregar contactos do Firebase quando disponível
   useEffect(() => {
-    setTimeout(() => {
-      const mockContacts: ContactForm[] = [
-        {
-          id: '1',
-          name: 'João Silva',
-          email: 'joao.silva@empresa.pt',
-          phone: '+351 912 345 678',
-          company: 'TechCorp Solutions',
-          projectType: 'Vídeo Corporativo',
-          budget: '€5.000 - €10.000',
-          message: 'Olá! Estamos interessados em criar um vídeo corporativo para apresentar a nossa empresa. Gostaríamos de discutir as possibilidades e orçamento.',
-          status: 'new',
-          createdAt: '2024-03-15T10:30:00Z',
-          updatedAt: '2024-03-15T10:30:00Z',
-        },
-        {
-          id: '2',
-          name: 'Maria Costa',
-          email: 'maria.costa@gmail.com',
-          phone: '+351 963 789 012',
-          projectType: 'Casamento',
-          budget: '€2.000 - €5.000',
-          message: 'Bom dia! O nosso casamento será em Junho e gostaríamos de ter um vídeo cinematográfico do nosso grande dia. Podem enviar-nos mais informações?',
-          status: 'read',
-          createdAt: '2024-03-14T16:45:00Z',
-          updatedAt: '2024-03-14T18:20:00Z',
-        },
-        {
-          id: '3',
-          name: 'Carlos Mendes',
-          email: 'carlos@startup.pt',
-          company: 'InnovateTech',
-          projectType: 'Comercial',
-          budget: '€3.000 - €7.000',
-          message: 'Precisamos de um vídeo promocional para o lançamento do nosso novo produto. Têm experiência com startups tecnológicas?',
-          status: 'replied',
-          createdAt: '2024-03-13T14:20:00Z',
-          updatedAt: '2024-03-13T16:45:00Z',
-        },
-      ];
-      setContacts(mockContacts);
-      setFilteredContacts(mockContacts);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    setFilteredContacts(contacts);
+  }, [contacts]);
 
   // Filtrar contactos
   useEffect(() => {
@@ -122,17 +86,23 @@ const ContactManager: React.FC = () => {
     setFilteredContacts(filtered);
   }, [contacts, searchTerm, selectedStatus]);
 
-  const handleStatusChange = (id: string, newStatus: ContactForm['status']) => {
-    setContacts(contacts.map(contact =>
-      contact.id === id ? { ...contact, status: newStatus, updatedAt: new Date().toISOString() } : contact
-    ));
+  const handleStatusChange = async (id: string, newStatus: ContactForm['status']) => {
+    try {
+      await updateContact(id, { status: newStatus });
+    } catch (error) {
+      console.error('Erro ao atualizar status do contacto:', error);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Tem certeza que deseja eliminar este contacto?')) {
-      setContacts(contacts.filter(contact => contact.id !== id));
-      if (selectedContact?.id === id) {
-        setSelectedContact(null);
+      try {
+        await deleteContact(id);
+        if (selectedContact?.id === id) {
+          setSelectedContact(null);
+        }
+      } catch (error) {
+        console.error('Erro ao eliminar contacto:', error);
       }
     }
   };
@@ -195,6 +165,25 @@ const ContactManager: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-600"></div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-900 mx-auto mb-4"></div>
+          <p className="text-stone-600">Carregando contactos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }

@@ -24,10 +24,16 @@ import {
 import { SiteSettings } from '../../types';
 import { useSettings } from '../../hooks/useFirebase';
 import VideoUploader, { VideoData } from './VideoUploader';
-  maintenanceMessage?: string;
-}
 
 const SettingsManager: React.FC = () => {
+  const {
+    settings: firebaseSettings,
+    loading,
+    error,
+    createSettings,
+    updateSettings
+  } = useSettings();
+
   const [settings, setSettings] = useState<SiteSettings>({
     siteName: 'MV Studio',
     tagline: 'Não é como começa, É como termina',
@@ -54,6 +60,13 @@ const SettingsManager: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Carregar configurações do Firebase quando disponível
+  useEffect(() => {
+    if (firebaseSettings && firebaseSettings.length > 0) {
+      setSettings(firebaseSettings[0]);
+    }
+  }, [firebaseSettings]);
+
   const tabs = [
     { id: 'general', label: 'Geral', icon: Globe },
     { id: 'contact', label: 'Contacto', icon: Mail },
@@ -65,15 +78,24 @@ const SettingsManager: React.FC = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    
-    // Simular salvamento
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setSaving(false);
-    setSaved(true);
-    
-    // Reset saved state after 3 seconds
-    setTimeout(() => setSaved(false), 3000);
+
+    try {
+      if (firebaseSettings && firebaseSettings.length > 0) {
+        // Atualizar configurações existentes
+        await updateSettings(firebaseSettings[0].id, settings);
+      } else {
+        // Criar novas configurações
+        await createSettings(settings);
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      alert('Erro ao salvar configurações. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {

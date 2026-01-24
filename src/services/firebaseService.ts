@@ -24,6 +24,7 @@ import {
 } from 'firebase/storage';
 import { db, storage } from '../config/firebase';
 import { Project, Service, TeamMember, Testimonial, Brand, MediaAsset, SiteSettings } from '../types';
+import { AnalyticsEvent } from './analyticsService';
 
 // Tipos para upload
 export interface UploadProgress {
@@ -43,6 +44,7 @@ const COLLECTIONS = {
   MEDIA: 'media',
   CONTACTS: 'contacts',
   SETTINGS: 'settings',
+  ANALYTICS: 'analytics',
 } as const;
 
 // Classe principal do serviço Firebase
@@ -144,25 +146,37 @@ export class FirebaseService {
   
   static async getServices(): Promise<Service[]> {
     try {
+      console.log('🔄 FirebaseService.getServices - Buscando serviços...');
+
       const querySnapshot = await getDocs(
         query(collection(db, COLLECTIONS.SERVICES), orderBy('order', 'asc'))
       );
-      return querySnapshot.docs.map(doc => ({
+
+      const services = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       })) as Service[];
+
+      console.log('✅ FirebaseService.getServices - Encontrados:', services.length, 'serviços');
+      return services;
     } catch (error) {
-      console.error('Erro ao buscar serviços:', error);
+      console.error('❌ FirebaseService.getServices - Erro:', error);
       throw error;
     }
   }
 
   static async createService(service: Omit<Service, 'id'>): Promise<string> {
     try {
+      console.log('🔄 FirebaseService.createService - Dados recebidos:', service);
+      console.log('🔄 FirebaseService.createService - Collection:', COLLECTIONS.SERVICES);
+
       const docRef = await addDoc(collection(db, COLLECTIONS.SERVICES), service);
+      console.log('✅ FirebaseService.createService - Sucesso, ID:', docRef.id);
+
       return docRef.id;
     } catch (error) {
-      console.error('Erro ao criar serviço:', error);
+      console.error('❌ FirebaseService.createService - Erro:', error);
+      console.error('❌ FirebaseService.createService - Dados que causaram erro:', service);
       throw error;
     }
   }
@@ -377,39 +391,7 @@ export class FirebaseService {
     }
   }
 
-  // ==================== CONFIGURAÇÕES ====================
-  
-  static async getSettings(): Promise<SiteSettings | null> {
-    try {
-      const querySnapshot = await getDocs(collection(db, COLLECTIONS.SETTINGS));
-      if (!querySnapshot.empty) {
-        const doc = querySnapshot.docs[0];
-        return {
-          id: doc.id,
-          ...doc.data(),
-        } as SiteSettings;
-      }
-      return null;
-    } catch (error) {
-      console.error('Erro ao buscar configurações:', error);
-      throw error;
-    }
-  }
 
-  static async updateSettings(settings: Partial<SiteSettings>): Promise<void> {
-    try {
-      const querySnapshot = await getDocs(collection(db, COLLECTIONS.SETTINGS));
-      if (!querySnapshot.empty) {
-        const docRef = querySnapshot.docs[0].ref;
-        await updateDoc(docRef, settings);
-      } else {
-        await addDoc(collection(db, COLLECTIONS.SETTINGS), settings);
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar configurações:', error);
-      throw error;
-    }
-  }
 
   // ==================== CONTACTOS ====================
   
@@ -594,6 +576,45 @@ export class FirebaseService {
       await deleteDoc(doc(db, COLLECTIONS.BRANDS, id));
     } catch (error) {
       console.error('Erro ao deletar marca:', error);
+      throw error;
+    }
+  }
+
+  // ==================== ANALYTICS ====================
+
+  static async getAnalyticsEvents(startDate?: Date, endDate?: Date): Promise<AnalyticsEvent[]> {
+    try {
+      let q = query(collection(db, COLLECTIONS.ANALYTICS), orderBy('timestamp', 'desc'));
+
+      if (startDate) {
+        q = query(q, where('timestamp', '>=', startDate.toISOString()));
+      }
+      if (endDate) {
+        q = query(q, where('timestamp', '<=', endDate.toISOString()));
+      }
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as AnalyticsEvent[];
+    } catch (error) {
+      console.error('Erro ao buscar eventos de analytics:', error);
+      throw error;
+    }
+  }
+
+  static async createAnalyticsEvent(event: AnalyticsEvent): Promise<string> {
+    try {
+      const now = Timestamp.now();
+      const docRef = await addDoc(collection(db, COLLECTIONS.ANALYTICS), {
+        ...event,
+        createdAt: now,
+        updatedAt: now,
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Erro ao criar evento de analytics:', error);
       throw error;
     }
   }
