@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useScrollAnimation as useParallaxScrollAnimation } from '../hooks/useParallax';
-import { ParallaxElement, ParallaxLayers } from './HomeParallax';
 import DramaticTransitions, { TypewriterEffect } from './DramaticTransitions';
 import { usePublicSettings } from '../hooks/usePublicData';
 import { AnimatedElement } from '../hooks/useScrollAnimation';
-import ResponsiveButton from './ui/ResponsiveButton';
 
 // Spline Scene Component
 declare global {
@@ -74,24 +72,19 @@ const Hero: React.FC = () => {
   // Hook para trigger automático no Spline quando faz scroll
   useSplineAutoClick(splineRef);
 
-  // Error handling para Spline
+  // Error handling para Spline com timeout mais rápido
   useEffect(() => {
     const handleSplineError = () => {
       console.warn('Spline viewer failed to load, using fallback');
       setSplineError(true);
     };
 
-    const handleSplineLoad = () => {
-      console.log('Spline viewer loaded successfully');
-      setSplineLoaded(true);
-    };
-
-    // Timeout para detectar falha de carregamento
+    // Timeout reduzido para melhor UX
     const timeout = setTimeout(() => {
       if (!splineLoaded) {
         handleSplineError();
       }
-    }, 10000); // 10 segundos
+    }, 5000); // 5 segundos
 
     return () => clearTimeout(timeout);
   }, [splineLoaded]);
