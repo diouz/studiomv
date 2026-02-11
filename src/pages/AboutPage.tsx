@@ -139,30 +139,31 @@ const AboutPage: React.FC = () => {
           <AnimatedElement animation="slideRight" delay={400}>
             <div className="relative">
               <div className="aspect-[4/5] bg-gradient-to-br from-stone-900/20 to-black rounded-lg overflow-hidden relative group hover:scale-105 transition-transform duration-500">
-              <img
-                src="https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="MV Studio Team"
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-              />
+                <img
+                  src="https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="MV Studio Team"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                />
 
-              {/* Film Strip Effect */}
-              <div className="absolute left-0 top-0 w-8 h-full bg-black opacity-80">
-                <div className="flex flex-col justify-between h-full py-4">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className="w-4 h-4 bg-stone-900/30 rounded-sm mx-auto" />
-                  ))}
+                {/* Film Strip Effect */}
+                <div className="absolute left-0 top-0 w-8 h-full bg-black opacity-80">
+                  <div className="flex flex-col justify-between h-full py-4">
+                    {[...Array(10)].map((_, i) => (
+                      <div key={i} className="w-4 h-4 bg-stone-900/30 rounded-sm mx-auto" />
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="absolute right-0 top-0 w-8 h-full bg-black opacity-80">
-                <div className="flex flex-col justify-between h-full py-4">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className="w-4 h-4 bg-stone-900/30 rounded-sm mx-auto" />
-                  ))}
+                <div className="absolute right-0 top-0 w-8 h-full bg-black opacity-80">
+                  <div className="flex flex-col justify-between h-full py-4">
+                    {[...Array(10)].map((_, i) => (
+                      <div key={i} className="w-4 h-4 bg-stone-900/30 rounded-sm mx-auto" />
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
             </div>
           </AnimatedElement>
         </div>
@@ -321,41 +322,36 @@ const AboutPage: React.FC = () => {
             href="https://wa.me/244949838924?text=Olá! Gostaria de saber mais sobre os serviços da MV Studio."
             target="_blank"
             rel="noopener noreferrer"
-            className={`relative inline-flex items-center gap-2 px-8 py-4 sm:px-10 sm:py-5 rounded-full text-lg sm:text-xl text-white font-bold shadow-lg overflow-hidden group transform transition-all duration-500 ease-out ${
-              isButtonHovered
-                ? 'bg-gray-800 border-2 border-red-500 shadow-red-500/25 scale-105'
-                : 'bg-gradient-to-r from-stone-700 via-stone-600 to-stone-800 shadow-stone-500/25 scale-100 hover:scale-105'
-            }`}
+            className={`relative inline-flex items-center gap-2 px-8 py-4 sm:px-10 sm:py-5 rounded-full text-lg sm:text-xl text-white font-bold shadow-lg overflow-hidden group transform transition-all duration-500 ease-out ${isButtonHovered
+              ? 'bg-gray-800 border-2 border-red-500 shadow-red-500/25 scale-105'
+              : 'bg-gradient-to-r from-stone-700 via-stone-600 to-stone-800 shadow-stone-500/25 scale-100 hover:scale-105'
+              }`}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
           >
-            <span className={`relative z-10 flex items-center gap-2 transition-all duration-300 ease-out ${
-              isButtonHovered ? 'transform -translate-y-0.5' : 'transform translate-y-0'
-            }`}>
-              <Circle className={`w-2 h-2 fill-red-500 text-red-500 transition-all duration-300 ease-out ${
-                isButtonHovered
-                  ? 'opacity-100 scale-100 animate-pulse'
-                  : 'opacity-0 scale-0'
-              }`} />
+            <span className={`relative z-10 flex items-center gap-2 transition-all duration-300 ease-out ${isButtonHovered ? 'transform -translate-y-0.5' : 'transform translate-y-0'
+              }`}>
+              <Circle className={`w-2 h-2 fill-red-500 text-red-500 transition-all duration-300 ease-out ${isButtonHovered
+                ? 'opacity-100 scale-100 animate-pulse'
+                : 'opacity-0 scale-0'
+                }`} />
               Vamos Falar
             </span>
 
             {/* Background transition overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 transition-opacity duration-500 ease-out ${
-              isButtonHovered ? 'opacity-100' : 'opacity-0'
-            }`}></div>
+            <div className={`absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 transition-opacity duration-500 ease-out ${isButtonHovered ? 'opacity-100' : 'opacity-0'
+              }`}></div>
 
             {/* Electric flow animations */}
-            <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${
-              isButtonHovered ? 'opacity-100' : 'opacity-0'
-            }`}>
+            <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${isButtonHovered ? 'opacity-100' : 'opacity-0'
+              }`}>
               <div className="absolute inset-0 animate-electric-flow opacity-60">
                 <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-cyan-400 to-transparent animate-pulse"></div>
-                <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-blue-400 to-transparent animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-blue-400 to-transparent animate-pulse" style={{ animationDelay: '0.2s' }}></div>
               </div>
 
               <div className="absolute inset-0 animate-electric-flow-2 opacity-40">
-                <div className="absolute left-0 top-1/3 w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse" style={{animationDelay: '0.1s'}}></div>
+                <div className="absolute left-0 top-1/3 w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse" style={{ animationDelay: '0.1s' }}></div>
               </div>
             </div>
           </a>

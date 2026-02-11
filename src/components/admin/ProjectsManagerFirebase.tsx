@@ -21,15 +21,15 @@ import { useProjects } from '../../hooks/useFirebase';
 import MediaLinkUploader from './MediaLinkUploader';
 
 const ProjectsManagerFirebase: React.FC = () => {
-  const { 
-    projects, 
-    loading, 
-    error, 
-    createProject, 
-    updateProject, 
-    deleteProject 
+  const {
+    projects,
+    loading,
+    error,
+    createProject,
+    updateProject,
+    deleteProject
   } = useProjects();
-  
+
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -146,6 +146,8 @@ const ProjectsManagerFirebase: React.FC = () => {
       // Preparar dados do projeto
       const projectData = {
         ...formData,
+        slug: formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        order: 0,
         thumbnail: formData.images.find(img => img.isMain)?.url || formData.images[0]?.url || '',
       };
 
@@ -267,14 +269,14 @@ const ProjectsManagerFirebase: React.FC = () => {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.map((project) => (
-          <div key={project.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <div key={project.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out">
             {/* Thumbnail */}
-            <div className="relative h-48 bg-stone-100">
+            <div className="relative h-48 bg-stone-100 overflow-hidden">
               {project.thumbnail ? (
                 <img
                   src={project.thumbnail}
                   alt={project.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -290,11 +292,10 @@ const ProjectsManagerFirebase: React.FC = () => {
                     Destaque
                   </span>
                 )}
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  project.published
-                    ? 'bg-green-500 text-white'
-                    : 'bg-stone-500 text-white'
-                }`}>
+                <span className={`text-xs px-2 py-1 rounded-full ${project.published
+                  ? 'bg-green-500 text-white'
+                  : 'bg-stone-500 text-white'
+                  }`}>
                   {project.published ? 'Publicado' : 'Rascunho'}
                 </span>
               </div>
@@ -370,22 +371,20 @@ const ProjectsManagerFirebase: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleTogglePublished(project.id)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      project.published
-                        ? 'text-green-600 hover:bg-green-50'
-                        : 'text-stone-400 hover:bg-stone-50'
-                    }`}
+                    className={`p-2 rounded-lg transition-colors ${project.published
+                      ? 'text-green-600 hover:bg-green-50'
+                      : 'text-stone-400 hover:bg-stone-50'
+                      }`}
                     title={project.published ? 'Despublicar' : 'Publicar'}
                   >
                     {project.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                   </button>
                   <button
                     onClick={() => handleToggleFeatured(project.id)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      project.featured
-                        ? 'text-yellow-600 hover:bg-yellow-50'
-                        : 'text-stone-400 hover:bg-stone-50'
-                    }`}
+                    className={`p-2 rounded-lg transition-colors ${project.featured
+                      ? 'text-yellow-600 hover:bg-yellow-50'
+                      : 'text-stone-400 hover:bg-stone-50'
+                      }`}
                     title={project.featured ? 'Remover destaque' : 'Destacar'}
                   >
                     <Star className="w-4 h-4" />

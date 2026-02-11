@@ -9,21 +9,17 @@ import {
   query,
   where,
   orderBy,
-  limit,
   Timestamp,
-  DocumentData,
-  QuerySnapshot,
 } from 'firebase/firestore';
 import {
   ref,
-  uploadBytes,
   getDownloadURL,
   deleteObject,
   uploadBytesResumable,
   UploadTaskSnapshot,
 } from 'firebase/storage';
 import { db, storage } from '../config/firebase';
-import { Project, Service, TeamMember, Testimonial, Brand, MediaAsset, SiteSettings } from '../types';
+import { Project, Service, TeamMember, Testimonial, Brand, MediaAsset, SiteSettings, ContactForm, BlogPost, BlogCategory } from '../types';
 import { AnalyticsEvent } from './analyticsService';
 
 // Tipos para upload
@@ -45,12 +41,14 @@ const COLLECTIONS = {
   CONTACTS: 'contacts',
   SETTINGS: 'settings',
   ANALYTICS: 'analytics',
+  BLOG_POSTS: 'blog_posts',
+  BLOG_CATEGORIES: 'blog_categories',
 } as const;
 
 // Classe principal do serviço Firebase
 export class FirebaseService {
   // ==================== PROJETOS ====================
-  
+
   static async getProjects(): Promise<Project[]> {
     try {
       const querySnapshot = await getDocs(
@@ -113,7 +111,8 @@ export class FirebaseService {
 
   static async updateProject(id: string, updates: Partial<Project>): Promise<void> {
     try {
-      const updateData = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateData: any = { // Using any properly here for dynamic updates or define a specific type
         ...updates,
         updatedAt: Timestamp.now(),
       };
@@ -143,7 +142,7 @@ export class FirebaseService {
   }
 
   // ==================== SERVIÇOS ====================
-  
+
   static async getServices(): Promise<Service[]> {
     try {
       console.log('🔄 FirebaseService.getServices - Buscando serviços...');
@@ -200,7 +199,7 @@ export class FirebaseService {
   }
 
   // ==================== EQUIPA ====================
-  
+
   static async getTeamMembers(): Promise<TeamMember[]> {
     try {
       const querySnapshot = await getDocs(
@@ -245,7 +244,7 @@ export class FirebaseService {
   }
 
   // ==================== TESTEMUNHOS ====================
-  
+
   static async getTestimonials(): Promise<Testimonial[]> {
     try {
       const querySnapshot = await getDocs(
@@ -294,7 +293,7 @@ export class FirebaseService {
   }
 
   // ==================== MEDIA ====================
-  
+
   static async uploadFile(
     file: File,
     path: string,
@@ -394,8 +393,8 @@ export class FirebaseService {
 
 
   // ==================== CONTACTOS ====================
-  
-  static async getContacts(): Promise<any[]> {
+
+  static async getContacts(): Promise<ContactForm[]> {
     try {
       const querySnapshot = await getDocs(
         query(collection(db, COLLECTIONS.CONTACTS), orderBy('createdAt', 'desc'))
@@ -405,14 +404,14 @@ export class FirebaseService {
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate?.() || new Date(),
         updatedAt: doc.data().updatedAt?.toDate?.() || new Date(),
-      }));
+      })) as ContactForm[];
     } catch (error) {
       console.error('Erro ao buscar contactos:', error);
       throw error;
     }
   }
 
-  static async createContact(contact: any): Promise<string> {
+  static async createContact(contact: Omit<ContactForm, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
       const now = Timestamp.now();
       const docRef = await addDoc(collection(db, COLLECTIONS.CONTACTS), {
@@ -427,7 +426,7 @@ export class FirebaseService {
     }
   }
 
-  static async updateContact(id: string, updates: any): Promise<void> {
+  static async updateContact(id: string, updates: Partial<ContactForm>): Promise<void> {
     try {
       await updateDoc(doc(db, COLLECTIONS.CONTACTS, id), {
         ...updates,
@@ -615,6 +614,91 @@ export class FirebaseService {
       return docRef.id;
     } catch (error) {
       console.error('Erro ao criar evento de analytics:', error);
+      throw error;
+    }
+  }
+  // ==================== BLOG ====================
+
+  static async getBlogPosts(): Promise<BlogPost[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, COLLECTIONS.BLOG_POSTS), orderBy('createdAt', 'desc'))
+      );
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || doc.data().createdAt,
+        updatedAt: doc.data().updatedAt?.toDate?.()?.toISOString() || doc.data().updatedAt,
+      })) as BlogPost[];
+    } catch (error) {
+      console.error('Erro ao buscar posts do blog:', error);
+      throw error;
+    }
+  }
+
+  static async createBlogPost(post: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    try {
+      const now = Timestamp.now();
+      const docRef = await addDoc(collection(db, COLLECTIONS.BLOG_POSTS), {
+        ...post,
+        createdAt: now,
+        updatedAt: now,
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Erro ao criar post do blog:', error);
+      throw error;
+    }
+  }
+
+  static async updateBlogPost(id: string, updates: Partial<BlogPost>): Promise<void> {
+    try {
+      await updateDoc(doc(db, COLLECTIONS.BLOG_POSTS, id), {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar post do blog:', error);
+      throw error;
+    }
+  }
+
+  static async deleteBlogPost(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, COLLECTIONS.BLOG_POSTS, id));
+    } catch (error) {
+      console.error('Erro ao eliminar post do blog:', error);
+      throw error;
+    }
+  }
+
+  static async getBlogCategories(): Promise<BlogCategory[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, COLLECTIONS.BLOG_CATEGORIES), orderBy('name', 'asc'))
+      );
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || doc.data().createdAt,
+      })) as BlogCategory[];
+    } catch (error) {
+      console.error('Erro ao buscar categorias do blog:', error);
+      throw error;
+    }
+  }
+
+  static async createBlogCategory(category: Omit<BlogCategory, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    try {
+      const now = Timestamp.now();
+      const docRef = await addDoc(collection(db, COLLECTIONS.BLOG_CATEGORIES), {
+        ...category,
+        createdAt: now,
+        updatedAt: now,
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Erro ao criar categoria do blog:', error);
       throw error;
     }
   }

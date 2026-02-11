@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
     color: string;
     description?: string;
   }> = ({ title, value, icon, color, description }) => (
-    <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-stone-600">{title}</p>
@@ -169,21 +169,21 @@ const Dashboard: React.FC = () => {
           color="bg-blue-500"
           description={`${stats.publishedProjects} publicados`}
         />
-        
+
         <StatCard
           title="Projetos em Destaque"
           value={stats.featuredProjects}
           icon={<Star className="w-6 h-6 text-white" />}
           color="bg-yellow-500"
         />
-        
+
         <StatCard
           title="Serviços"
           value={stats.totalServices}
           icon={<Activity className="w-6 h-6 text-white" />}
           color="bg-green-500"
         />
-        
+
         <StatCard
           title="Equipa"
           value={stats.totalTeamMembers}
@@ -200,7 +200,7 @@ const Dashboard: React.FC = () => {
           icon={<Star className="w-6 h-6 text-white" />}
           color="bg-orange-500"
         />
-        
+
         <StatCard
           title="Marcas/Clientes"
           value={stats.totalBrands}
@@ -217,7 +217,7 @@ const Dashboard: React.FC = () => {
             <h2 className="text-lg font-semibold text-stone-900">Atividade Recente</h2>
           </div>
         </div>
-        
+
         <div className="p-6">
           {stats.recentActivity.length > 0 ? (
             <div className="space-y-4">
@@ -231,12 +231,12 @@ const Dashboard: React.FC = () => {
                       {activity.title}
                     </p>
                     <p className="text-xs text-stone-500">
-                      {activity.type === 'project' ? 'Projeto' : 
-                       activity.type === 'service' ? 'Serviço' :
-                       activity.type === 'team' ? 'Membro da Equipa' :
-                       activity.type === 'testimonial' ? 'Testemunho' : 'Marca'} {activity.action === 'created' ? 'criado' : 
-                       activity.action === 'updated' ? 'atualizado' :
-                       activity.action === 'published' ? 'publicado' : 'despublicado'}
+                      {activity.type === 'project' ? 'Projeto' :
+                        activity.type === 'service' ? 'Serviço' :
+                          activity.type === 'team' ? 'Membro da Equipa' :
+                            activity.type === 'testimonial' ? 'Testemunho' : 'Marca'} {activity.action === 'created' ? 'criado' :
+                              activity.action === 'updated' ? 'atualizado' :
+                                activity.action === 'published' ? 'publicado' : 'despublicado'}
                     </p>
                   </div>
                   <div className="text-xs text-stone-400">
@@ -262,12 +262,12 @@ const Dashboard: React.FC = () => {
             <FolderOpen className="w-5 h-5 text-blue-500" />
             <span className="text-sm font-medium text-stone-700">Novo Projeto</span>
           </button>
-          
+
           <button className="flex items-center gap-3 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
             <Activity className="w-5 h-5 text-green-500" />
             <span className="text-sm font-medium text-stone-700">Novo Serviço</span>
           </button>
-          
+
           <button className="flex items-center gap-3 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
             <Users className="w-5 h-5 text-purple-500" />
             <span className="text-sm font-medium text-stone-700">Novo Membro</span>

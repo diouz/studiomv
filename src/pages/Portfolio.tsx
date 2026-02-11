@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Play, Filter, Calendar, User, Image as ImageIcon, Video, Loader } from 'lucide-react';
-import { ParallaxElement } from '../components/HomeParallax';
-import DramaticTransitions from '../components/DramaticTransitions';
+import { Play, User, Image as ImageIcon, Video, Loader } from 'lucide-react';
 import StandardButton from '../components/StandardButton';
 import { usePublicProjectsByCategory, useProjectCategories } from '../hooks/usePublicData';
-import { Project } from '../types';
-import VideoRenderer from '../components/VideoRenderer';
 import VideoModal from '../components/VideoModal';
-import { Play } from 'lucide-react';
+import DramaticTransitions from '../components/DramaticTransitions';
 
 const Portfolio: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -83,11 +79,10 @@ const Portfolio: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-8 py-3 rounded-2xl border transition-all duration-500 backdrop-blur-sm ${
-                  selectedCategory === category.id
-                    ? 'bg-stone-800/30 border-stone-600/50 text-stone-300 shadow-lg shadow-stone-600/20'
-                    : 'bg-stone-900/30 border-stone-700/30 text-stone-400 hover:bg-stone-800/40 hover:border-stone-600/30 hover:text-stone-300'
-                }`}
+                className={`px-8 py-3 rounded-2xl border transition-all duration-500 backdrop-blur-sm ${selectedCategory === category.id
+                  ? 'bg-stone-800/30 border-stone-600/50 text-stone-300 shadow-lg shadow-stone-600/20'
+                  : 'bg-stone-900/30 border-stone-700/30 text-stone-400 hover:bg-stone-800/40 hover:border-stone-600/30 hover:text-stone-300'
+                  }`}
               >
                 {category.id === 'all' ? category.name : formatCategoryName(category.name)}
               </button>
@@ -138,120 +133,120 @@ const Portfolio: React.FC = () => {
                     className="group relative cursor-pointer"
                   >
                     {/* Card Moderno */}
-                    <div className="relative bg-gradient-to-br from-stone-900/40 to-stone-950/60 backdrop-blur-md rounded-3xl overflow-hidden border border-stone-700/30 hover:border-stone-600/40 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-stone-600/10">
-                {/* Mídia do Projeto */}
-                <div className="aspect-video relative overflow-hidden">
-                  {/* Renderizar thumbnail com botão de play para vídeos */}
-                  {project.videos && project.videos.length > 0 ? (
-                    <div className="relative w-full h-full group">
-                      <img
-                        src={project.images?.[0]?.url || project.videos[0].thumbnailUrl || project.thumbnail || 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1'}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
+                    <div className="relative bg-gradient-to-br from-stone-900/40 to-stone-950/60 backdrop-blur-md rounded-3xl overflow-hidden border border-stone-700/30 hover:border-stone-600/40 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-500/20">
+                      {/* Mídia do Projeto */}
+                      <div className="aspect-video relative overflow-hidden">
+                        {/* Renderizar thumbnail com botão de play para vídeos */}
+                        {project.videos && project.videos.length > 0 ? (
+                          <div className="relative w-full h-full group">
+                            <img
+                              src={project.images?.[0]?.url || project.videos[0].thumbnailUrl || project.thumbnail || 'https://images.pexels.com/photos/1444442/pexels-photo-1444442.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1'}
+                              alt={project.title}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+                            />
 
-                      {/* Botão de play apenas no hover */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedVideo({
-                              url: project.videos[0].url,
-                              title: project.title,
-                              description: project.description
-                            });
-                          }}
-                          className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center hover:bg-white/30 hover:scale-110 transition-all duration-300"
-                          aria-label={`Reproduzir vídeo: ${project.title}`}
-                        >
-                          <Play className="w-6 h-6 text-white ml-1" />
-                        </button>
+                            {/* Botão de play apenas no hover */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedVideo({
+                                    url: project.videos[0].url,
+                                    title: project.title,
+                                    description: project.description
+                                  });
+                                }}
+                                className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center hover:bg-white/30 hover:scale-110 transition-all duration-300"
+                                aria-label={`Reproduzir vídeo: ${project.title}`}
+                              >
+                                <Play className="w-6 h-6 text-white ml-1" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : project.thumbnail ? (
+                          <img
+                            src={project.thumbnail}
+                            alt={project.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-stone-800 flex items-center justify-center">
+                            <ImageIcon className="w-12 h-12 text-stone-600" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                        {/* Media Count Badges */}
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          {project.images && project.images.length > 0 && (
+                            <span className="bg-blue-500/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
+                              <ImageIcon className="w-3 h-3" />
+                              {project.images.length}
+                            </span>
+                          )}
+                          {project.videos && project.videos.length > 0 && (
+                            <span className="bg-purple-500/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
+                              <Video className="w-3 h-3" />
+                              {project.videos.length}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Play Button */}
+                        {project.videos && project.videos.length > 0 && (
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="w-16 h-16 rounded-full bg-stone-800/30 backdrop-blur-sm border border-stone-600/40 flex items-center justify-center">
+                              <Play className="w-6 h-6 text-stone-300 ml-1" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Project Info */}
+                      <div className="p-6">
+                        <h3 className="text-xl font-light text-white mb-2">{project.title}</h3>
+                        <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.description}</p>
+
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-stone-400 text-sm font-medium">
+                            {formatCategoryName(project.category)}
+                          </span>
+                          <span className="text-gray-500 text-xs">{project.year}</span>
+                        </div>
+
+                        {/* Client and Duration */}
+                        <div className="space-y-1 text-xs text-gray-500">
+                          <div className="flex items-center gap-2">
+                            <User className="w-3 h-3" />
+                            <span>{project.client}</span>
+                          </div>
+                          {project.duration && (
+                            <div className="flex items-center gap-2">
+                              <Play className="w-3 h-3" />
+                              <span>{project.duration}</span>
+                            </div>
+                          )}
+                          {/* Media Summary */}
+                          <div className="flex items-center gap-4 pt-1">
+                            {project.images && project.images.length > 0 && (
+                              <span className="flex items-center gap-1">
+                                <ImageIcon className="w-3 h-3" />
+                                {project.images.length} foto{project.images.length !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                            {project.videos && project.videos.length > 0 && (
+                              <span className="flex items-center gap-1">
+                                <Video className="w-3 h-3" />
+                                {project.videos.length} vídeo{project.videos.length !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  ) : project.thumbnail ? (
-                    <img
-                      src={project.thumbnail}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-stone-800 flex items-center justify-center">
-                      <ImageIcon className="w-12 h-12 text-stone-600" />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-                  {/* Media Count Badges */}
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    {project.images && project.images.length > 0 && (
-                      <span className="bg-blue-500/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
-                        <ImageIcon className="w-3 h-3" />
-                        {project.images.length}
-                      </span>
-                    )}
-                    {project.videos && project.videos.length > 0 && (
-                      <span className="bg-purple-500/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
-                        <Video className="w-3 h-3" />
-                        {project.videos.length}
-                      </span>
-                    )}
                   </div>
-
-                  {/* Play Button */}
-                  {project.videos && project.videos.length > 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-16 h-16 rounded-full bg-stone-800/30 backdrop-blur-sm border border-stone-600/40 flex items-center justify-center">
-                        <Play className="w-6 h-6 text-stone-300 ml-1" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Project Info */}
-                <div className="p-6">
-                  <h3 className="text-xl font-light text-white mb-2">{project.title}</h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.description}</p>
-
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-stone-400 text-sm font-medium">
-                      {formatCategoryName(project.category)}
-                    </span>
-                    <span className="text-gray-500 text-xs">{project.year}</span>
-                  </div>
-
-                  {/* Client and Duration */}
-                  <div className="space-y-1 text-xs text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <User className="w-3 h-3" />
-                      <span>{project.client}</span>
-                    </div>
-                    {project.duration && (
-                      <div className="flex items-center gap-2">
-                        <Play className="w-3 h-3" />
-                        <span>{project.duration}</span>
-                      </div>
-                    )}
-                    {/* Media Summary */}
-                    <div className="flex items-center gap-4 pt-1">
-                      {project.images && project.images.length > 0 && (
-                        <span className="flex items-center gap-1">
-                          <ImageIcon className="w-3 h-3" />
-                          {project.images.length} foto{project.images.length !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                      {project.videos && project.videos.length > 0 && (
-                        <span className="flex items-center gap-1">
-                          <Video className="w-3 h-3" />
-                          {project.videos.length} vídeo{project.videos.length !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
             )}
           </>
         )}

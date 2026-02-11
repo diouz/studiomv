@@ -12,7 +12,7 @@ export interface AnalyticsEvent {
     formType?: string;
     videoTitle?: string;
     downloadFile?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   timestamp: string;
   userAgent?: string;
@@ -40,8 +40,8 @@ export class AnalyticsService {
    * Rastrear evento de clique em botão
    */
   static async trackButtonClick(
-    buttonText: string, 
-    metadata?: { page?: string; section?: string; url?: string; [key: string]: any }
+    buttonText: string,
+    metadata?: { page?: string; section?: string; url?: string;[key: string]: any }
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
@@ -71,7 +71,7 @@ export class AnalyticsService {
    */
   static async trackFormSubmit(
     formType: string,
-    metadata?: { success?: boolean; [key: string]: any }
+    metadata?: { success?: boolean;[key: string]: any }
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
@@ -100,7 +100,7 @@ export class AnalyticsService {
    */
   static async trackVideoPlay(
     videoTitle: string,
-    metadata?: { videoUrl?: string; duration?: number; [key: string]: any }
+    metadata?: { videoUrl?: string; duration?: number;[key: string]: any }
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
@@ -129,7 +129,7 @@ export class AnalyticsService {
    */
   static async trackPageView(
     pageName: string,
-    metadata?: { [key: string]: any }
+    metadata?: { [key: string]: unknown }
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
@@ -162,7 +162,7 @@ export class AnalyticsService {
   ): Promise<AnalyticsStats> {
     try {
       const events = await FirebaseService.getAnalyticsEvents(startDate, endDate);
-      
+
       const stats: AnalyticsStats = {
         totalEvents: events.length,
         eventsByType: {},
@@ -180,7 +180,7 @@ export class AnalyticsService {
       // Top botões clicados
       const buttonClicks = events.filter(e => e.eventType === 'button_click');
       const buttonCounts: Record<string, number> = {};
-      
+
       buttonClicks.forEach(event => {
         const buttonText = event.metadata?.buttonText || event.eventName;
         buttonCounts[buttonText] = (buttonCounts[buttonText] || 0) + 1;

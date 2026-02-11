@@ -78,13 +78,12 @@ const ProjectsGrid: React.FC = () => {
           {projects.map((project, index) => (
             <div
               key={project.id}
-              className={`group relative aspect-square bg-gray-900 rounded-md overflow-hidden cursor-pointer transform transition-all duration-700 ${
-                visibleItems.has(index)
+              className={`group relative aspect-square bg-stone-900 rounded-xl overflow-hidden cursor-pointer transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] ${visibleItems.has(index)
                   ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-8'
-              }`}
-              style={{ 
-                transitionDelay: `${index * 150}ms` 
+                }`}
+              style={{
+                transitionDelay: `${index * 100}ms`
               }}
               onMouseEnter={() => setHoveredProject(project.id)}
               onMouseLeave={() => setHoveredProject(null)}
@@ -93,28 +92,30 @@ const ProjectsGrid: React.FC = () => {
               <img
                 src={project.thumbnail}
                 alt={project.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.3] group-hover:grayscale-0"
               />
 
-              {/* Overlay simples */}
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {project.videoUrl ? (
-                    <div className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center">
-                      <Play className="w-4 h-4 text-black ml-0.5" />
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center">
-                      <ExternalLink className="w-4 h-4 text-black" />
-                    </div>
-                  )}
-                </div>
+              {/* Overlay suave */}
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-900/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                {project.videoUrl ? (
+                  <div className="w-12 h-12 bg-amber-500/90 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 mb-3 transform transition-transform group-hover:scale-110">
+                    <Play className="w-5 h-5 text-black ml-0.5" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg mb-3 transform transition-transform group-hover:scale-110">
+                    <ExternalLink className="w-5 h-5 text-black" />
+                  </div>
+                )}
+                <h3 className="text-white text-sm font-light tracking-wide text-center">{project.title}</h3>
+                <p className="text-amber-400 text-[10px] uppercase tracking-widest mt-1">{project.category}</p>
               </div>
 
               {/* Hover Effect Border */}
-              <div className={`absolute inset-0 border border-amber-400 rounded-md transition-opacity duration-300 ${
-                hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
-              }`} />
+              <div className={`absolute inset-0 border-2 border-amber-500/50 rounded-xl transition-opacity duration-500 pointer-events-none ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
+                }`} />
             </div>
           ))}
         </div>

@@ -4,8 +4,6 @@ import {
   Search,
   Edit,
   Trash2,
-  Eye,
-  EyeOff,
   Star,
   Mail,
   Phone,
@@ -41,8 +39,7 @@ const TeamManager: React.FC = () => {
     if (searchTerm) {
       filtered = filtered.filter(member =>
         member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (member.skills && member.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())))
+        member.role.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -51,16 +48,7 @@ const TeamManager: React.FC = () => {
 
 
 
-  const handleToggleActive = async (id: string) => {
-    try {
-      const member = teamMembers.find(m => m.id === id);
-      if (member) {
-        await updateTeamMember(id, { ...member, active: !member.active });
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar status ativo:', error);
-    }
-  };
+
 
   const handleToggleFeatured = async (id: string) => {
     try {
@@ -138,15 +126,15 @@ const TeamManager: React.FC = () => {
       {/* Team Members Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
-          <div key={member.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
+          <div key={member.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out">
             {/* Header with Avatar */}
             <div className="relative p-6 pb-4">
               <div className="flex items-start justify-between mb-4">
                 <div className="relative">
                   <img
-                    src={member.avatar}
+                    src={member.avatar.url}
                     alt={member.name}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                   {/* Status Badges */}
                   <div className="absolute -top-2 -right-2 flex flex-col gap-1">
@@ -155,35 +143,17 @@ const TeamManager: React.FC = () => {
                         <Star className="w-3 h-3" />
                       </span>
                     )}
-                    <span className={`text-white text-xs p-1 rounded-full ${
-                      member.active ? 'bg-green-500' : 'bg-red-500'
-                    }`}>
-                      {member.active ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                    </span>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex gap-1">
                   <button
-                    onClick={() => handleToggleActive(member.id)}
-                    className={`p-1 rounded ${
-                      member.active 
-                        ? 'text-green-600 hover:bg-green-50' 
-                        : 'text-stone-400 hover:bg-stone-50'
-                    }`}
-                    title={member.active ? 'Desativar' : 'Ativar'}
-                  >
-                    {member.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  </button>
-                  
-                  <button
                     onClick={() => handleToggleFeatured(member.id)}
-                    className={`p-1 rounded ${
-                      member.featured 
-                        ? 'text-yellow-600 hover:bg-yellow-50' 
-                        : 'text-stone-400 hover:bg-stone-50'
-                    }`}
+                    className={`p-1 rounded ${member.featured
+                      ? 'text-yellow-600 hover:bg-yellow-50'
+                      : 'text-stone-400 hover:bg-stone-50'
+                      }`}
                     title={member.featured ? 'Remover destaque' : 'Destacar'}
                   >
                     <Star className="w-4 h-4" />
@@ -216,20 +186,7 @@ const TeamManager: React.FC = () => {
               </div>
             </div>
 
-            {/* Skills */}
-            <div className="px-6 pb-4">
-              <h4 className="text-sm font-medium text-stone-900 mb-2">Competências</h4>
-              <div className="flex flex-wrap gap-1">
-                {member.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="bg-stone-100 text-stone-700 text-xs px-2 py-1 rounded"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
+            {/* Skills removed as not in type */}
 
             {/* Social Links */}
             {Object.keys(member.socialLinks).length > 0 && (
@@ -268,7 +225,7 @@ const TeamManager: React.FC = () => {
                   >
                     <Edit className="w-4 h-4" />
                   </button>
-                  
+
                   <button
                     onClick={() => handleDelete(member.id)}
                     className="p-1 text-red-600 hover:bg-red-50 rounded"
@@ -289,7 +246,7 @@ const TeamManager: React.FC = () => {
           <User className="w-12 h-12 text-stone-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-stone-900 mb-2">Nenhum membro encontrado</h3>
           <p className="text-stone-600 mb-4">
-            {searchTerm 
+            {searchTerm
               ? 'Tente ajustar o termo de pesquisa'
               : 'Comece adicionando o primeiro membro da equipa'
             }
@@ -317,7 +274,7 @@ const TeamManager: React.FC = () => {
                 <input
                   type="text"
                   value={editingMember.name}
-                  onChange={(e) => setEditingMember({...editingMember, name: e.target.value})}
+                  onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 />
               </div>
@@ -327,7 +284,7 @@ const TeamManager: React.FC = () => {
                 <input
                   type="text"
                   value={editingMember.role}
-                  onChange={(e) => setEditingMember({...editingMember, role: e.target.value})}
+                  onChange={(e) => setEditingMember({ ...editingMember, role: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 />
               </div>
@@ -336,7 +293,7 @@ const TeamManager: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
                 <textarea
                   value={editingMember.bio}
-                  onChange={(e) => setEditingMember({...editingMember, bio: e.target.value})}
+                  onChange={(e) => setEditingMember({ ...editingMember, bio: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                 />

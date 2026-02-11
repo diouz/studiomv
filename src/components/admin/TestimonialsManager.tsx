@@ -25,7 +25,7 @@ const TestimonialsManager: React.FC = () => {
     clientName: '',
     clientRole: '',
     clientCompany: '',
-    clientAvatar: '',
+    clientAvatarUrl: '',
     content: '',
     rating: 5,
     featured: false,
@@ -38,7 +38,7 @@ const TestimonialsManager: React.FC = () => {
       clientName: '',
       clientRole: '',
       clientCompany: '',
-      clientAvatar: '',
+      clientAvatarUrl: '',
       content: '',
       rating: 5,
       featured: false,
@@ -54,6 +54,19 @@ const TestimonialsManager: React.FC = () => {
     try {
       const testimonialData = {
         ...formData,
+        clientAvatar: formData.clientAvatarUrl ? {
+          id: Date.now().toString(),
+          url: formData.clientAvatarUrl,
+          thumbnailUrl: formData.clientAvatarUrl,
+          type: 'image' as const,
+          alt: formData.clientName,
+          title: formData.clientName,
+          description: '',
+          fileSize: 0,
+          mimeType: 'image/jpeg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        } : undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -77,7 +90,7 @@ const TestimonialsManager: React.FC = () => {
       clientName: testimonial.clientName,
       clientRole: testimonial.clientRole,
       clientCompany: testimonial.clientCompany || '',
-      clientAvatar: testimonial.clientAvatar || '',
+      clientAvatarUrl: testimonial.clientAvatar?.url || '',
       content: testimonial.content,
       rating: testimonial.rating,
       featured: testimonial.featured,
@@ -91,9 +104,8 @@ const TestimonialsManager: React.FC = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${
-          i < rating ? 'text-yellow-400 fill-current' : 'text-stone-300'
-        }`}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-stone-300'
+          }`}
       />
     ));
   };
@@ -153,13 +165,7 @@ const TestimonialsManager: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-PT', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+
 
   if (loading) {
     return (
@@ -203,16 +209,16 @@ const TestimonialsManager: React.FC = () => {
       {/* Testimonials List */}
       <div className="space-y-4">
         {filteredTestimonials.map((testimonial) => (
-          <div key={testimonial.id} className="bg-white rounded-xl border border-stone-200 p-6 hover:shadow-lg transition-shadow">
+          <div key={testimonial.id} className="bg-white rounded-xl border border-stone-200 p-6 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4 flex-1">
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                   {testimonial.clientAvatar ? (
                     <img
-                      src={testimonial.clientAvatar}
+                      src={testimonial.clientAvatar.url}
                       alt={testimonial.clientName}
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
                     <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center">
@@ -225,7 +231,7 @@ const TestimonialsManager: React.FC = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-semibold text-stone-900">{testimonial.clientName}</h3>
-                    
+
                     {/* Status Badges */}
                     {testimonial.featured && (
                       <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full flex items-center gap-1">
@@ -233,11 +239,10 @@ const TestimonialsManager: React.FC = () => {
                         Destaque
                       </span>
                     )}
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      testimonial.published 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded-full ${testimonial.published
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                      }`}>
                       {testimonial.published ? 'Publicado' : 'Rascunho'}
                     </span>
                   </div>
@@ -273,23 +278,21 @@ const TestimonialsManager: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleTogglePublished(testimonial.id)}
-                  className={`p-2 rounded ${
-                    testimonial.published 
-                      ? 'text-green-600 hover:bg-green-50' 
-                      : 'text-stone-400 hover:bg-stone-50'
-                  }`}
+                  className={`p-2 rounded ${testimonial.published
+                    ? 'text-green-600 hover:bg-green-50'
+                    : 'text-stone-400 hover:bg-stone-50'
+                    }`}
                   title={testimonial.published ? 'Despublicar' : 'Publicar'}
                 >
                   {testimonial.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
-                
+
                 <button
                   onClick={() => handleToggleFeatured(testimonial.id)}
-                  className={`p-2 rounded ${
-                    testimonial.featured 
-                      ? 'text-yellow-600 hover:bg-yellow-50' 
-                      : 'text-stone-400 hover:bg-stone-50'
-                  }`}
+                  className={`p-2 rounded ${testimonial.featured
+                    ? 'text-yellow-600 hover:bg-yellow-50'
+                    : 'text-stone-400 hover:bg-stone-50'
+                    }`}
                   title={testimonial.featured ? 'Remover destaque' : 'Destacar'}
                 >
                   <Star className="w-4 h-4" />
@@ -302,7 +305,7 @@ const TestimonialsManager: React.FC = () => {
                 >
                   <Edit className="w-4 h-4" />
                 </button>
-                
+
                 <button
                   onClick={() => handleDelete(testimonial.id)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded"
@@ -322,7 +325,7 @@ const TestimonialsManager: React.FC = () => {
           <Quote className="w-12 h-12 text-stone-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-stone-900 mb-2">Nenhum testemunho encontrado</h3>
           <p className="text-stone-600 mb-4">
-            {searchTerm 
+            {searchTerm
               ? 'Tente ajustar o termo de pesquisa'
               : 'Comece adicionando o primeiro testemunho'
             }
@@ -408,8 +411,8 @@ const TestimonialsManager: React.FC = () => {
                 </label>
                 <input
                   type="url"
-                  value={formData.clientAvatar}
-                  onChange={(e) => setFormData({ ...formData, clientAvatar: e.target.value })}
+                  value={formData.clientAvatarUrl}
+                  onChange={(e) => setFormData({ ...formData, clientAvatarUrl: e.target.value })}
                   className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500"
                   placeholder="https://exemplo.com/avatar.jpg"
                 />

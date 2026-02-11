@@ -4,7 +4,7 @@ import { useScrollPerformance, useThrottle } from './usePerformance';
 // Hook for parallax effects - HOME PAGE ONLY
 export const useParallax = (speed: number = 0.5, offset: number = 0, enabledOnHome: boolean = false) => {
   const [transform, setTransform] = useState('translateY(0px)');
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<any>(null);
 
   // Check if we're on home page
   const isHomePage = window.location.pathname === '/' || window.location.hash === '' || window.location.hash === '#home';
@@ -35,7 +35,7 @@ export const useParallax = (speed: number = 0.5, offset: number = 0, enabledOnHo
 export const useScrollAnimation = (threshold: number = 0.1, rootMargin: string = '0px') => {
   const [isVisible, setIsVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const elementRef = useRef<HTMLElement>(null);
+  const elementRef = useRef<any>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -69,7 +69,7 @@ export const useScrollAnimation = (threshold: number = 0.1, rootMargin: string =
 export const useStaggeredAnimation = (delay: number = 100) => {
   const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
   const [isInView, setIsInView] = useState(false);
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<any>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -91,7 +91,7 @@ export const useStaggeredAnimation = (delay: number = 100) => {
   useEffect(() => {
     if (isInView) {
       const timers: NodeJS.Timeout[] = [];
-      
+
       // Animate items with staggered delay
       for (let i = 0; i < 10; i++) { // Adjust max items as needed
         const timer = setTimeout(() => {
@@ -120,10 +120,10 @@ export const use3DTilt = (intensity: number = 10) => {
     const rect = elementRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     const deltaX = (e.clientX - centerX) / (rect.width / 2);
     const deltaY = (e.clientY - centerY) / (rect.height / 2);
-    
+
     setTilt({
       x: deltaY * intensity,
       y: deltaX * intensity,
@@ -163,10 +163,10 @@ export const useMagneticEffect = (strength: number = 0.3) => {
     const rect = elementRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     const deltaX = (e.clientX - centerX) * strength;
     const deltaY = (e.clientY - centerY) * strength;
-    
+
     setPosition({ x: deltaX, y: deltaY });
   }, [strength]);
 

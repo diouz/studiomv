@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Settings, 
-  Users, 
-  FileText, 
-  Image, 
-  MessageSquare, 
-  BarChart3, 
+import {
+  Settings,
+  Users,
+  Image,
+  BarChart3,
   LogOut,
   Menu,
   X,
   Home,
   Briefcase,
   Star,
-  Mail
+  Mail,
+  PenTool
 } from 'lucide-react';
 import Dashboard from '../components/admin/Dashboard';
 import ProjectsManagerFirebase from '../components/admin/ProjectsManagerFirebase';
@@ -24,8 +23,10 @@ import SettingsManagerNew from '../components/admin/SettingsManagerNew';
 import TestButton from '../components/admin/TestButton';
 import TestimonialsManager from '../components/admin/TestimonialsManager';
 import BrandsManager from '../components/admin/BrandsManager';
+import BlogManager from '../components/admin/BlogManager';
+import AnalyticsManager from '../components/admin/AnalyticsManager';
 
-interface AdminPageProps {}
+interface AdminPageProps { }
 
 const AdminPage: React.FC<AdminPageProps> = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -60,25 +61,30 @@ const AdminPage: React.FC<AdminPageProps> = () => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'projects', label: 'Projetos', icon: Briefcase },
     { id: 'services', label: 'Serviços', icon: Settings },
+    { id: 'blog', label: 'Blog', icon: PenTool },
     { id: 'team', label: 'Equipa', icon: Users },
     { id: 'testimonials', label: 'Testemunhos', icon: Star },
     { id: 'brands', label: 'Marcas', icon: Image },
     { id: 'media', label: 'Media', icon: Image },
     { id: 'contacts', label: 'Contactos', icon: Mail },
     { id: 'settings', label: 'Configurações', icon: Settings },
-    { id: 'test', label: 'Teste', icon: Settings },
   ];
 
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
         return <Dashboard />;
+      case 'analytics':
+        return <AnalyticsManager />;
       case 'projects':
         return <ProjectsManagerFirebase />;
       case 'services':
         return <ServicesManager />;
+      case 'blog':
+        return <BlogManager />;
       case 'team':
         return <TeamManager />;
       case 'testimonials':
@@ -107,7 +113,7 @@ const AdminPage: React.FC<AdminPageProps> = () => {
             <h1 className="text-3xl font-bold text-white mb-2">MV Studio</h1>
             <p className="text-stone-400">Painel Administrativo</p>
           </div>
-          
+
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-stone-300 text-sm font-medium mb-2">
@@ -122,7 +128,7 @@ const AdminPage: React.FC<AdminPageProps> = () => {
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-stone-300 text-sm font-medium mb-2">
                 Palavra-passe
@@ -136,7 +142,7 @@ const AdminPage: React.FC<AdminPageProps> = () => {
                 required
               />
             </div>
-            
+
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-stone-600 to-stone-700 text-white py-3 rounded-xl font-medium hover:from-stone-500 hover:to-stone-600 transition-all duration-300 transform hover:scale-105"
@@ -144,7 +150,7 @@ const AdminPage: React.FC<AdminPageProps> = () => {
               Entrar
             </button>
           </form>
-          
+
           <div className="mt-6 p-4 bg-stone-700/30 rounded-xl">
             <p className="text-stone-400 text-sm text-center">
               <strong>Demo:</strong> admin / mvstudio2024
@@ -186,11 +192,10 @@ const AdminPage: React.FC<AdminPageProps> = () => {
                 <li key={item.id}>
                   <button
                     onClick={() => setActiveSection(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      activeSection === item.id
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${activeSection === item.id
                         ? 'bg-stone-700 text-white'
                         : 'text-stone-400 hover:text-white hover:bg-stone-800'
-                    }`}
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
                     {sidebarOpen && <span>{item.label}</span>}

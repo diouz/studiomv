@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FirebaseService } from '../services/firebaseService';
-import { Project, Service, TeamMember, Testimonial, Brand, MediaAsset, SiteSettings } from '../types';
+import { Project, Service, TeamMember, Testimonial, Brand, MediaAsset, SiteSettings, BlogPost, BlogCategory } from '../types';
 
 // Hook para projetos
 export const useProjects = () => {
@@ -507,5 +507,114 @@ export const useBrands = () => {
     createBrand,
     updateBrand,
     deleteBrand,
+  };
+};
+// Hook para blog posts
+export const useBlogPosts = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const data = await FirebaseService.getBlogPosts();
+      setPosts(data);
+      setError(null);
+    } catch (err) {
+      setError('Erro ao carregar posts do blog');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPost = async (post: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const id = await FirebaseService.createBlogPost(post);
+      await fetchPosts();
+      return id;
+    } catch (err) {
+      setError('Erro ao criar post do blog');
+      throw err;
+    }
+  };
+
+  const updatePost = async (id: string, updates: Partial<BlogPost>) => {
+    try {
+      await FirebaseService.updateBlogPost(id, updates);
+      await fetchPosts();
+    } catch (err) {
+      setError('Erro ao atualizar post do blog');
+      throw err;
+    }
+  };
+
+  const deletePost = async (id: string) => {
+    try {
+      await FirebaseService.deleteBlogPost(id);
+      await fetchPosts();
+    } catch (err) {
+      setError('Erro ao eliminar post do blog');
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  return {
+    posts,
+    loading,
+    error,
+    fetchPosts,
+    createPost,
+    updatePost,
+    deletePost,
+  };
+};
+
+// Hook para categorias do blog
+export const useBlogCategories = () => {
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await FirebaseService.getBlogCategories();
+      setCategories(data);
+      setError(null);
+    } catch (err) {
+      setError('Erro ao carregar categorias do blog');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createCategory = async (category: Omit<BlogCategory, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const id = await FirebaseService.createBlogCategory(category);
+      await fetchCategories();
+      return id;
+    } catch (err) {
+      setError('Erro ao criar categoria do blog');
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  return {
+    categories,
+    loading,
+    error,
+    fetchCategories,
+    createCategory,
   };
 };

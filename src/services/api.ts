@@ -1,10 +1,10 @@
-import { 
-  Project, 
-  Service, 
-  TeamMember, 
-  ContactForm, 
-  SiteSettings, 
-  Testimonial, 
+import {
+  Project,
+  Service,
+  TeamMember,
+  ContactForm,
+  SiteSettings,
+  Testimonial,
   BlogPost,
   ApiResponse,
   PaginatedResponse,
@@ -32,7 +32,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
@@ -60,19 +60,20 @@ class ApiClient {
       };
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           throw new Error('Request timeout');
         }
         throw error;
       }
-      
+
       throw new Error('Unknown error occurred');
     }
   }
 
   // GET request
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
     const url = new URL(`${this.baseURL}${endpoint}`);
     if (params) {
@@ -87,6 +88,7 @@ class ApiClient {
   }
 
   // POST request
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -95,6 +97,7 @@ class ApiClient {
   }
 
   // PUT request
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async put<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',

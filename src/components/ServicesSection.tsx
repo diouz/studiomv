@@ -133,11 +133,11 @@ const ServicesSection: React.FC = () => {
 
       {/* Film Grain Effect */}
       <div className="absolute inset-0 opacity-10 pointer-events-none"
-           style={{
-             backgroundImage: `radial-gradient(circle, transparent 1px, rgba(139,69,19,0.1) 1px)`,
-             backgroundSize: '3px 3px',
-             animation: 'grain 8s steps(10) infinite'
-           }} />
+        style={{
+          backgroundImage: `radial-gradient(circle, transparent 1px, rgba(139,69,19,0.1) 1px)`,
+          backgroundSize: '3px 3px',
+          animation: 'grain 8s steps(10) infinite'
+        }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
@@ -160,7 +160,7 @@ const ServicesSection: React.FC = () => {
               onMouseLeave={() => setHoveredService(null)}
             >
               {/* Service Card Elegante - Largura Otimizada */}
-              <div className="relative bg-gradient-to-br from-amber-950/20 via-stone-900/30 to-amber-900/10 backdrop-blur-xl rounded-3xl p-8 lg:p-10 border border-amber-800/20 hover:border-amber-600/40 transition-all duration-700 ease-out overflow-hidden min-h-[380px] lg:min-h-[420px] group-hover:shadow-2xl group-hover:shadow-amber-500/20 group-hover:scale-[1.03] group-hover:bg-gradient-to-br group-hover:from-amber-950/30 group-hover:via-stone-800/40 group-hover:to-amber-900/20">
+              <div className="relative bg-gradient-to-br from-amber-950/20 via-stone-900/30 to-amber-900/10 backdrop-blur-xl rounded-3xl p-8 lg:p-10 border border-amber-800/20 hover:border-amber-600/40 transition-all duration-700 ease-out overflow-hidden min-h-[380px] lg:min-h-[420px] group-hover:shadow-2xl group-hover:shadow-amber-500/30 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:bg-gradient-to-br group-hover:from-amber-950/30 group-hover:via-stone-800/40 group-hover:to-amber-900/20">
 
                 {/* Ícone Elegante Acastanhado - Melhorado */}
                 <div className="relative mb-8">
@@ -184,9 +184,8 @@ const ServicesSection: React.FC = () => {
                 </div>
 
                 {/* Efeito de Vidro Elegante */}
-                <div className={`absolute inset-0 bg-gradient-to-br from-amber-800/8 via-stone-700/5 to-amber-900/12 transition-opacity duration-700 ${
-                  hoveredService === String(service.id) ? 'opacity-100' : 'opacity-0'
-                }`} />
+                <div className={`absolute inset-0 bg-gradient-to-br from-amber-800/8 via-stone-700/5 to-amber-900/12 transition-opacity duration-700 ${hoveredService === String(service.id) ? 'opacity-100' : 'opacity-0'
+                  }`} />
 
                 {/* Padrão Sutil de Textura */}
                 {hoveredService === String(service.id) && (
@@ -206,34 +205,30 @@ const ServicesSection: React.FC = () => {
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Title */}
-                  <h3 className={`text-2xl font-light mb-5 transition-all duration-700 ease-out ${
-                    hoveredService === String(service.id)
+                  <h3 className={`text-2xl font-light mb-5 transition-all duration-700 ease-out ${hoveredService === String(service.id)
                       ? 'text-amber-200 transform translate-y-0'
                       : 'text-stone-200 transform translate-y-0'
-                  }`}>
+                    }`}>
                     {service.title}
                   </h3>
 
                   {/* Description */}
-                  <p className={`text-sm font-light leading-relaxed mb-7 transition-all duration-700 ease-out ${
-                    hoveredService === String(service.id)
+                  <p className={`text-sm font-light leading-relaxed mb-7 transition-all duration-700 ease-out ${hoveredService === String(service.id)
                       ? 'text-stone-300'
                       : 'text-stone-400'
-                  }`}>
+                    }`}>
                     {service.description}
                   </p>
 
                   {/* Features List */}
                   <div className="space-y-3 mb-8">
                     {service.features.slice(0, 3).map((feature: string, idx: number) => (
-                      <div key={idx} className={`flex items-center text-xs transition-all duration-700 delay-${idx * 150} ${
-                        hoveredService === String(service.id)
+                      <div key={idx} className={`flex items-center text-xs transition-all duration-700 delay-${idx * 150} ${hoveredService === String(service.id)
                           ? 'text-stone-300 opacity-100 transform translate-x-0'
                           : 'text-stone-500 opacity-80 transform translate-x-1'
-                      }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full mr-4 transition-colors duration-700 ${
-                          hoveredService === String(service.id) ? 'bg-amber-400' : 'bg-amber-700'
-                        }`}></div>
+                        }`}>
+                        <div className={`w-1.5 h-1.5 rounded-full mr-4 transition-colors duration-700 ${hoveredService === String(service.id) ? 'bg-amber-400' : 'bg-amber-700'
+                          }`}></div>
                         {feature}
                       </div>
                     ))}
@@ -241,9 +236,8 @@ const ServicesSection: React.FC = () => {
 
                   {/* Price */}
                   <div className="mb-4">
-                    <p className={`text-lg font-semibold transition-all duration-700 ${
-                      hoveredService === String(service.id) ? 'text-amber-300' : 'text-amber-400'
-                    }`}>
+                    <p className={`text-lg font-semibold transition-all duration-700 ${hoveredService === String(service.id) ? 'text-amber-300' : 'text-amber-400'
+                      }`}>
                       {formatPrice(service)}
                     </p>
                   </div>
@@ -260,12 +254,10 @@ const ServicesSection: React.FC = () => {
                 </div>
 
                 {/* Linhas de Elegância */}
-                <div className={`absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-600/60 to-transparent transform origin-left transition-transform duration-1000 ease-out ${
-                  hoveredService === String(service.id) ? 'scale-x-100' : 'scale-x-0'
-                }`} />
-                <div className={`absolute bottom-0 right-0 w-full h-px bg-gradient-to-r from-transparent via-stone-500/40 to-transparent transform origin-right transition-transform duration-1000 ease-out delay-200 ${
-                  hoveredService === String(service.id) ? 'scale-x-100' : 'scale-x-0'
-                }`} />
+                <div className={`absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-600/60 to-transparent transform origin-left transition-transform duration-1000 ease-out ${hoveredService === String(service.id) ? 'scale-x-100' : 'scale-x-0'
+                  }`} />
+                <div className={`absolute bottom-0 right-0 w-full h-px bg-gradient-to-r from-transparent via-stone-500/40 to-transparent transform origin-right transition-transform duration-1000 ease-out delay-200 ${hoveredService === String(service.id) ? 'scale-x-100' : 'scale-x-0'
+                  }`} />
               </div>
             </div>
           ))}

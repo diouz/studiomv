@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Video, Edit, Palette, Play, Star, Clock, Users, Film, Clapperboard, Mic, Lightbulb, X, ArrowRight, Zap } from 'lucide-react';
+import { Camera, Edit, Palette, Star, Clock, Users, Film, Clapperboard, Mic, Lightbulb, X, Zap } from 'lucide-react';
 import StandardButton from '../components/StandardButton';
 
 interface CatalogItem {
@@ -173,11 +173,11 @@ const ServicesPage: React.FC = () => {
 
       {/* Film Grain - Castanho */}
       <div className="fixed inset-0 opacity-15 pointer-events-none z-0"
-           style={{
-             backgroundImage: `radial-gradient(circle, transparent 1px, rgba(139,69,19,0.15) 1px)`,
-             backgroundSize: '3px 3px',
-             animation: 'grain 8s steps(10) infinite'
-           }} />
+        style={{
+          backgroundImage: `radial-gradient(circle, transparent 1px, rgba(139,69,19,0.15) 1px)`,
+          backgroundSize: '3px 3px',
+          animation: 'grain 8s steps(10) infinite'
+        }} />
 
       {/* Electric Grid Effect */}
       <div className="fixed inset-0 opacity-5 pointer-events-none z-0">
@@ -204,8 +204,8 @@ const ServicesPage: React.FC = () => {
             {/* Electric Effect Behind Title */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-stone-600 to-transparent animate-pulse" />
-              <div className="absolute top-1/2 left-1/4 w-px h-8 bg-gradient-to-b from-transparent via-stone-500 to-transparent animate-pulse" style={{animationDelay: '0.5s'}} />
-              <div className="absolute top-1/2 right-1/4 w-px h-8 bg-gradient-to-b from-transparent via-stone-400 to-transparent animate-pulse" style={{animationDelay: '1s'}} />
+              <div className="absolute top-1/2 left-1/4 w-px h-8 bg-gradient-to-b from-transparent via-stone-500 to-transparent animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="absolute top-1/2 right-1/4 w-px h-8 bg-gradient-to-b from-transparent via-stone-400 to-transparent animate-pulse" style={{ animationDelay: '1s' }} />
             </div>
           </div>
           <p className="text-xl text-stone-300 max-w-3xl mx-auto leading-relaxed">
@@ -219,11 +219,10 @@ const ServicesPage: React.FC = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`relative px-6 py-3 rounded-2xl font-light tracking-wider transition-all duration-500 overflow-hidden group ${
-                selectedCategory === category
+              className={`relative px-6 py-3 rounded-2xl font-light tracking-wider transition-all duration-500 overflow-hidden group ${selectedCategory === category
                   ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-black shadow-lg shadow-amber-500/30 scale-105'
                   : 'bg-gradient-to-r from-stone-900/40 via-amber-950/20 to-stone-900/40 text-stone-200 border border-amber-800/20 hover:border-amber-600/40 hover:bg-gradient-to-r hover:from-amber-950/30 hover:via-stone-800/30 hover:to-amber-950/30 hover:text-amber-200 hover:scale-105'
-              }`}
+                }`}
             >
               <span className="relative z-10">{category}</span>
               {selectedCategory !== category && (
@@ -247,9 +246,8 @@ const ServicesPage: React.FC = () => {
               onClick={() => setSelectedService(item)}
             >
               {/* Electric Border Effect */}
-              <div className={`absolute inset-0 rounded-3xl transition-opacity duration-700 ${
-                hoveredCard === item.id ? 'opacity-100' : 'opacity-0'
-              }`}>
+              <div className={`absolute inset-0 rounded-3xl transition-opacity duration-700 ${hoveredCard === item.id ? 'opacity-100' : 'opacity-0'
+                }`}>
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
                 <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-r from-transparent via-stone-400 to-transparent" />
                 <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-amber-600 to-transparent" />
@@ -288,12 +286,10 @@ const ServicesPage: React.FC = () => {
                 {/* Animated Icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative">
-                    <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-800/40 via-stone-700/30 to-amber-900/50 flex items-center justify-center transition-all duration-700 ${
-                      hoveredCard === item.id ? 'scale-110 rotate-3 shadow-2xl shadow-amber-600/40' : 'shadow-xl shadow-stone-900/30'
-                    }`}>
-                      <div className={`transition-all duration-700 ${
-                        hoveredCard === item.id ? 'scale-110 text-amber-200' : 'text-amber-500'
+                    <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-800/40 via-stone-700/30 to-amber-900/50 flex items-center justify-center transition-all duration-700 ${hoveredCard === item.id ? 'scale-110 rotate-3 shadow-2xl shadow-amber-600/40' : 'shadow-xl shadow-stone-900/30'
                       }`}>
+                      <div className={`transition-all duration-700 ${hoveredCard === item.id ? 'scale-110 text-amber-200' : 'text-amber-500'
+                        }`}>
                         {React.cloneElement(item.icon as React.ReactElement, {
                           className: "w-8 h-8"
                         })}
@@ -326,16 +322,14 @@ const ServicesPage: React.FC = () => {
                 </div>
 
                 {/* Title */}
-                <h3 className={`text-xl font-light mb-3 transition-colors duration-700 line-clamp-1 ${
-                  hoveredCard === item.id ? 'text-amber-200' : 'text-stone-200'
-                }`}>
+                <h3 className={`text-xl font-light mb-3 transition-colors duration-700 line-clamp-1 ${hoveredCard === item.id ? 'text-amber-200' : 'text-stone-200'
+                  }`}>
                   {item.title}
                 </h3>
 
                 {/* Description */}
-                <p className={`text-sm mb-4 leading-relaxed line-clamp-3 transition-colors duration-700 ${
-                  hoveredCard === item.id ? 'text-stone-300' : 'text-stone-400'
-                }`}>
+                <p className={`text-sm mb-4 leading-relaxed line-clamp-3 transition-colors duration-700 ${hoveredCard === item.id ? 'text-stone-300' : 'text-stone-400'
+                  }`}>
                   {item.description}
                 </p>
 
@@ -357,11 +351,10 @@ const ServicesPage: React.FC = () => {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-3 h-3 ${
-                          i < Math.floor(item.rating!)
+                        className={`w-3 h-3 ${i < Math.floor(item.rating!)
                             ? 'text-amber-500 fill-current'
                             : 'text-stone-600'
-                        }`}
+                          }`}
                       />
                     ))}
                     <span className="text-stone-400 text-xs ml-2">{item.rating}</span>
