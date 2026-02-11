@@ -11,9 +11,12 @@ import {
   Activity,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Database,
+  Trash2
 } from 'lucide-react';
 import { useProjects, useServices, useTeam, useTestimonials, useBrands } from '../../hooks/useFirebase';
+import { seedFirebaseData, clearSeedData } from '../../utils/seedData';
 
 interface DashboardStats {
   totalProjects: number;
@@ -51,6 +54,52 @@ const Dashboard: React.FC = () => {
     totalBrands: 0,
     recentActivity: []
   });
+
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+
+  // Função para adicionar dados de teste
+  const handleSeedData = async () => {
+    setIsSeeding(true);
+    try {
+      const success = await seedFirebaseData();
+      if (success) {
+        alert('✅ Dados de teste adicionados com sucesso!');
+        // Recarregar a página para ver os novos dados
+        window.location.reload();
+      } else {
+        alert('❌ Erro ao adicionar dados de teste');
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('❌ Erro ao adicionar dados de teste');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
+  // Função para limpar dados de teste
+  const handleClearData = async () => {
+    if (!confirm('⚠️ Tem certeza que deseja remover os dados de teste?')) {
+      return;
+    }
+
+    setIsClearing(true);
+    try {
+      const success = await clearSeedData();
+      if (success) {
+        alert('✅ Dados de teste removidos com sucesso!');
+        window.location.reload();
+      } else {
+        alert('❌ Erro ao remover dados de teste');
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('❌ Erro ao remover dados de teste');
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   useEffect(() => {
     // Calcular estatísticas
@@ -155,9 +204,32 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
-        <p className="text-stone-600">Visão geral do back office MV Studio</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
+          <p className="text-stone-600">Visão geral do back office MV Studio</p>
+        </div>
+
+        {/* Botões de Teste Firebase */}
+        <div className="flex gap-3">
+          <button
+            onClick={handleSeedData}
+            disabled={isSeeding}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Database className="w-4 h-4" />
+            {isSeeding ? 'Adicionando...' : 'Dados Teste'}
+          </button>
+
+          <button
+            onClick={handleClearData}
+            disabled={isClearing}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Trash2 className="w-4 h-4" />
+            {isClearing ? 'Removendo...' : 'Limpar Teste'}
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}

@@ -63,6 +63,8 @@ const Hero: React.FC = () => {
   const { elementRef: heroRef } = useParallaxScrollAnimation(0.1);
   const [isHoveringTitle, setIsHoveringTitle] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [splineError, setSplineError] = useState(false);
+  const [splineLoaded, setSplineLoaded] = useState(false);
 
   // Textos do Hero (do Firebase ou padrão)
   const heroTitle = settings?.heroTitle || 'Filmes que carregam';
@@ -71,6 +73,28 @@ const Hero: React.FC = () => {
 
   // Hook para trigger automático no Spline quando faz scroll
   useSplineAutoClick(splineRef);
+
+  // Error handling para Spline
+  useEffect(() => {
+    const handleSplineError = () => {
+      console.warn('Spline viewer failed to load, using fallback');
+      setSplineError(true);
+    };
+
+    const handleSplineLoad = () => {
+      console.log('Spline viewer loaded successfully');
+      setSplineLoaded(true);
+    };
+
+    // Timeout para detectar falha de carregamento
+    const timeout = setTimeout(() => {
+      if (!splineLoaded) {
+        handleSplineError();
+      }
+    }, 10000); // 10 segundos
+
+    return () => clearTimeout(timeout);
+  }, [splineLoaded]);
 
   // Mouse tracking para interação orbital
   useEffect(() => {
@@ -159,17 +183,29 @@ const Hero: React.FC = () => {
         }}
       >
         <div className="w-full h-full relative">
-          <spline-viewer
-            ref={splineRef}
-            url="https://prod.spline.design/jTMyGBieAUQfvg0X/scene.splinecode"
-            className="w-full h-full opacity-70"
-            style={{
-              width: '100%',
-              height: '100%',
-              background: 'transparent'
-            }}
-            events-target="global"
-          />
+          {!splineError ? (
+            <spline-viewer
+              ref={splineRef}
+              url="https://prod.spline.design/jTMyGBieAUQfvg0X/scene.splinecode"
+              className="w-full h-full opacity-70"
+              style={{
+                width: '100%',
+                height: '100%',
+                background: 'transparent'
+              }}
+              events-target="global"
+            />
+          ) : (
+            // Fallback quando Spline falha
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-900/20 to-stone-900/30 rounded-2xl">
+              <div className="text-center text-white/60">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-900/30 flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-sm">Carregando experiência 3D...</p>
+              </div>
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-amber-900/10 via-yellow-900/5 to-amber-950/15 blur-xl pointer-events-none"></div>
         </div>
       </div>
