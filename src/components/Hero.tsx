@@ -260,14 +260,14 @@ const Hero: React.FC = () => {
         <div className="absolute top-1/2 right-1/3 w-8 h-1 bg-gradient-to-r from-transparent via-amber-600/40 to-transparent animate-pulse"></div>
       </div>
 
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center sm:justify-between min-h-screen py-16 sm:py-0">
-        {/* Text content - Mobile first, then left side on desktop */}
-        <div className="w-full sm:flex-1 max-w-4xl relative z-30 text-center sm:text-left mb-8 sm:mb-0 sm:pr-8 lg:pr-16">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start justify-start min-h-screen py-20 sm:py-24 lg:py-0 lg:items-center">
+        {/* Text content - Sempre alinhado à esquerda */}
+        <div className="w-full lg:flex-1 max-w-4xl relative z-30 text-left mb-12 lg:mb-0 lg:pr-12 xl:pr-16">
           <DramaticTransitions type="fadeIn" delay={300} duration={1000}>
             <h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-[0.9] tracking-tight mb-6 cursor-pointer transition-all duration-300 relative"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-white leading-[0.85] tracking-tight mb-8 cursor-pointer transition-all duration-300 relative"
               style={{
-                transform: isHoveringTitle ? 'scale(1.02)' : 'scale(1)', // Tamanho normal aumentado
+                transform: isHoveringTitle ? 'scale(1.02)' : 'scale(1)',
               }}
               onMouseEnter={() => setIsHoveringTitle(true)}
               onMouseLeave={() => setIsHoveringTitle(false)}
@@ -335,7 +335,7 @@ const Hero: React.FC = () => {
           </DramaticTransitions>
 
           <DramaticTransitions type="slideUp" delay={2000} duration={1000}>
-            <p className="text-base sm:text-lg text-gray-300 font-light mb-8 max-w-2xl">
+            <p className="text-lg sm:text-xl text-gray-300 font-light mb-12 max-w-3xl leading-relaxed">
               <TypewriterEffect
                 text={heroDescription}
                 speed={80}
@@ -348,7 +348,7 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator Centralizado e Clicável com Transição Dramática */}
+      {/* Scroll Indicator - Diferente para Mobile e Desktop */}
       <AnimatedElement
         animation="fadeIn"
         delay={3000}
@@ -356,15 +356,30 @@ const Hero: React.FC = () => {
       >
         <button
           onClick={handleScrollClick}
-          className="group flex flex-col items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-stone-600 rounded-lg p-2 sm:p-3 bg-stone-950/20 backdrop-blur-sm hover:bg-stone-950/40 transition-all duration-300"
-          aria-label="Scroll para showreel e ativar Spline"
+          className="group flex flex-col items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-stone-600 rounded-lg p-3 sm:p-4 bg-stone-950/20 backdrop-blur-sm hover:bg-stone-950/40 transition-all duration-300"
+          aria-label="Scroll para showreel"
         >
-          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-stone-600/50 rounded-full flex justify-center animate-bounce group-hover:border-stone-500 group-hover:shadow-lg group-hover:shadow-stone-600/30 transition-all duration-300">
-            <div className="w-1 h-2 sm:h-3 bg-stone-600 rounded-full mt-1 sm:mt-2 animate-pulse group-hover:bg-stone-500"></div>
+          {/* Mobile: Mensagem de deslizar */}
+          <div className="block sm:hidden text-center">
+            <div className="text-stone-300 text-sm font-light mb-2 animate-pulse">
+              Deslize para baixo
+            </div>
+            <div className="flex justify-center">
+              <svg className="w-6 h-6 text-stone-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
           </div>
-          <span className="text-stone-600 text-xs font-light opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Clique para continuar
-          </span>
+
+          {/* Desktop: Ícone de scroll tradicional */}
+          <div className="hidden sm:flex flex-col items-center gap-2">
+            <div className="w-6 h-10 border-2 border-stone-600/50 rounded-full flex justify-center animate-bounce group-hover:border-stone-500 group-hover:shadow-lg group-hover:shadow-stone-600/30 transition-all duration-300">
+              <div className="w-1 h-3 bg-stone-600 rounded-full mt-2 animate-pulse group-hover:bg-stone-500"></div>
+            </div>
+            <span className="text-stone-600 text-xs font-light opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Clique para continuar
+            </span>
+          </div>
         </button>
       </AnimatedElement>
 

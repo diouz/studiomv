@@ -9,23 +9,82 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   const [logoVisible, setLogoVisible] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [splinePreloaded, setSplinePreloaded] = useState(false);
+
+  // Preload Spline durante o splash
+  useEffect(() => {
+    const preloadSpline = () => {
+      // Criar elemento spline-viewer invisível para preload
+      const splineElement = document.createElement('spline-viewer');
+      splineElement.setAttribute('url', 'https://prod.spline.design/jTMyGBieAUQfvg0X/scene.splinecode');
+      splineElement.style.position = 'absolute';
+      splineElement.style.top = '-9999px';
+      splineElement.style.left = '-9999px';
+      splineElement.style.width = '1px';
+      splineElement.style.height = '1px';
+      splineElement.style.opacity = '0';
+      splineElement.style.pointerEvents = 'none';
+
+      const handleLoad = () => {
+        console.log('Spline preloaded successfully during splash');
+        setSplinePreloaded(true);
+        document.body.removeChild(splineElement);
+      };
+
+      const handleError = () => {
+        console.warn('Spline preload failed during splash');
+        setSplinePreloaded(true); // Continue anyway
+        if (document.body.contains(splineElement)) {
+          document.body.removeChild(splineElement);
+        }
+      };
+
+      splineElement.addEventListener('load', handleLoad);
+      splineElement.addEventListener('ready', handleLoad);
+      splineElement.addEventListener('error', handleError);
+
+      document.body.appendChild(splineElement);
+
+      // Timeout para preload
+      setTimeout(() => {
+        if (document.body.contains(splineElement)) {
+          handleError();
+        }
+      }, 4000);
+    };
+
+    // Iniciar preload após 500ms
+    const preloadTimer = setTimeout(preloadSpline, 500);
+
+    return () => clearTimeout(preloadTimer);
+  }, []);
 
   useEffect(() => {
     const timer1 = setTimeout(() => setLogoVisible(true), 300);
     const timer2 = setTimeout(() => setTextVisible(true), 800);
-    const timer3 = setTimeout(() => setFadeOut(true), 2500);
-    const timer4 = setTimeout(() => {
-      setIsVisible(false);
-      onComplete();
-    }, 3200);
+
+    // Aguardar preload do Spline antes de fazer fade out
+    const checkSplineAndFadeOut = () => {
+      if (splinePreloaded) {
+        setFadeOut(true);
+        setTimeout(() => {
+          setIsVisible(false);
+          onComplete();
+        }, 700);
+      } else {
+        // Verificar novamente em 200ms
+        setTimeout(checkSplineAndFadeOut, 200);
+      }
+    };
+
+    const timer3 = setTimeout(checkSplineAndFadeOut, 2500);
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
-      clearTimeout(timer4);
     };
-  }, [onComplete]);
+  }, [onComplete, splinePreloaded]);
 
   if (!isVisible) return null;
 
