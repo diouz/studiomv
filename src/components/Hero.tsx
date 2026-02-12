@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useScrollAnimation as useParallaxScrollAnimation } from '../hooks/useParallax';
 import DramaticTransitions, { TypewriterEffect } from './DramaticTransitions';
 import { usePublicSettings } from '../hooks/usePublicData';
@@ -72,33 +72,73 @@ const Hero: React.FC = () => {
   // Hook para trigger automático no Spline quando faz scroll
   useSplineAutoClick(splineRef);
 
-  // Error handling para Spline com timeout mais rápido
+  // Error handling para Spline com timeout e event listeners
   useEffect(() => {
     const handleSplineError = () => {
       console.warn('Spline viewer failed to load, using fallback');
       setSplineError(true);
     };
 
-    // Timeout reduzido para melhor UX
+    const handleSplineLoad = () => {
+      console.log('Spline viewer loaded successfully');
+      setSplineLoaded(true);
+      setSplineError(false);
+    };
+
+    // Event listeners para detectar carregamento do Spline
+    if (splineRef.current) {
+      splineRef.current.addEventListener('load', handleSplineLoad);
+      splineRef.current.addEventListener('ready', handleSplineLoad);
+      splineRef.current.addEventListener('error', handleSplineError);
+    }
+
+    // Timeout aumentado para conexões lentas
     const timeout = setTimeout(() => {
       if (!splineLoaded) {
         handleSplineError();
       }
-    }, 5000); // 5 segundos
+    }, 10000); // 10 segundos
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      if (splineRef.current) {
+        splineRef.current.removeEventListener('load', handleSplineLoad);
+        splineRef.current.removeEventListener('ready', handleSplineLoad);
+        splineRef.current.removeEventListener('error', handleSplineError);
+      }
+    };
   }, [splineLoaded]);
 
-  // Mouse tracking para interação orbital
+  // Mouse tracking com throttling para melhor performance
   useEffect(() => {
+    let animationFrameId: number;
+
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
-      const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
-      setMousePosition({ x, y });
+      // Cancelar frame anterior se ainda não foi executado
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+
+      // Agendar atualização para próximo frame
+      animationFrameId = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+        const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
+        setMousePosition({ x, y });
+      });
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    // Só ativar mouse tracking em desktop
+    const isDesktop = window.innerWidth >= 1024;
+    if (isDesktop) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   // Função para scroll suave para showreel
@@ -109,18 +149,7 @@ const Hero: React.FC = () => {
     }
   };
 
-  // Função para detectar se o usuário fez scroll após chegar ao showreel
-  const hasUserScrolledAfterShowreel = () => {
-    const showreelSection = document.querySelector('#showreel');
-    if (!showreelSection) return false;
 
-    const rect = showreelSection.getBoundingClientRect();
-    const showreelTop = rect.top + window.scrollY;
-    const currentScroll = window.scrollY;
-
-    // Se o usuário scrollou mais de 100px após o showreel, considera que fez scroll manual
-    return currentScroll > showreelTop + 100;
-  };
 
   // Adicionar event listener para cliques no Spline
   useEffect(() => {
@@ -168,19 +197,22 @@ const Hero: React.FC = () => {
         ))}
       </div>
 
-      {/* Spline 3D sem parallax - posição fixa e maior com interação orbital */}
+      {/* Spline 3D - Layout responsivo melhorado */}
       <div
-        className="absolute top-1/2 sm:top-1/4 right-1/2 sm:right-4 lg:right-8 w-5/6 sm:w-4/6 lg:w-4/6 h-3/5 sm:h-4/5 z-10 transform translate-x-1/2 -translate-y-1/2 sm:translate-x-0 sm:translate-y-0 transition-transform duration-300 ease-out"
+        className="absolute inset-0 sm:top-1/4 sm:right-4 lg:right-8 w-full sm:w-4/6 lg:w-4/6 h-full sm:h-4/5 z-10 flex items-center justify-center sm:justify-end transition-transform duration-300 ease-out"
         style={{
-          transform: `translate(${mousePosition.x * 10}px, ${mousePosition.y * 10}px) rotateY(${mousePosition.x * 5}deg) rotateX(${-mousePosition.y * 5}deg)`
+          // Mouse tracking apenas em desktop
+          transform: window.innerWidth >= 1024
+            ? `translate(${mousePosition.x * 5}px, ${mousePosition.y * 5}px) rotateY(${mousePosition.x * 2}deg) rotateX(${-mousePosition.y * 2}deg)`
+            : 'none'
         }}
       >
-        <div className="w-full h-full relative">
+        <div className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl h-64 sm:h-96 lg:h-[500px] relative mx-auto sm:mx-0">
           {!splineError ? (
             <spline-viewer
               ref={splineRef}
               url="https://prod.spline.design/jTMyGBieAUQfvg0X/scene.splinecode"
-              className="w-full h-full opacity-70"
+              className="w-full h-full opacity-80 rounded-lg"
               style={{
                 width: '100%',
                 height: '100%',
@@ -189,17 +221,20 @@ const Hero: React.FC = () => {
               events-target="global"
             />
           ) : (
-            // Fallback quando Spline falha
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-900/20 to-stone-900/30 rounded-2xl">
-              <div className="text-center text-white/60">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-900/30 flex items-center justify-center">
-                  <div className="w-8 h-8 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+            // Fallback melhorado quando Spline falha
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-900/20 to-stone-900/30 rounded-lg border border-amber-900/20">
+              <div className="text-center text-white/70 p-8">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-900/40 to-stone-900/40 flex items-center justify-center border border-amber-700/30">
+                  <div className="w-10 h-10 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-                <p className="text-sm">Carregando experiência 3D...</p>
+                <h3 className="text-lg font-light mb-2">Experiência 3D</h3>
+                <p className="text-sm text-white/50">Carregando conteúdo interativo...</p>
               </div>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-900/10 via-yellow-900/5 to-amber-950/15 blur-xl pointer-events-none"></div>
+
+          {/* Overlay sutil para melhor integração */}
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-900/5 via-transparent to-stone-900/5 rounded-lg pointer-events-none"></div>
         </div>
       </div>
 
@@ -225,9 +260,9 @@ const Hero: React.FC = () => {
         <div className="absolute top-1/2 right-1/3 w-8 h-1 bg-gradient-to-r from-transparent via-amber-600/40 to-transparent animate-pulse"></div>
       </div>
 
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-start sm:items-center min-h-screen pt-16 sm:pt-0">
-        {/* Left side - Text content */}
-        <div className="flex-1 max-w-5xl relative z-30 pr-8 lg:pr-16">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center sm:justify-between min-h-screen py-16 sm:py-0">
+        {/* Text content - Mobile first, then left side on desktop */}
+        <div className="w-full sm:flex-1 max-w-4xl relative z-30 text-center sm:text-left mb-8 sm:mb-0 sm:pr-8 lg:pr-16">
           <DramaticTransitions type="fadeIn" delay={300} duration={1000}>
             <h1
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-[0.9] tracking-tight mb-6 cursor-pointer transition-all duration-300 relative"
